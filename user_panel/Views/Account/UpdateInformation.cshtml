@@ -1,0 +1,39 @@
+﻿@model user_panel.ViewModels.UpdateInformationViewModel
+@{
+    ViewData["Title"] = "Update Information";
+}
+<div class="container container-main-large">
+    <div class="card-custom">
+        <h2>@ViewData["Title"]</h2>
+        <hr style="border-color: var(--border-color);" />
+
+        <div class="row">
+            <!-- Left Side: Update Phone Number -->
+            <div class="col-md-6 border-end border-secondary update-section d-flex flex-column align-items-center justify-content-center">
+                <h4 class="text-center">Update Phone Number</h4>
+                <form asp-action="UpdatePhoneNumber" method="post" class="w-100 mt-3">
+                    <div class="form-group mb-3">
+                        <label asp-for="NewPhoneNumber" class="form-label"></label>
+                        <input asp-for="NewPhoneNumber" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Update Phone Number</button>
+                </form>
+            </div>
+
+            <!-- Right Side: Update E-mail Address -->
+            <div class="col-md-6 update-section d-flex flex-column align-items-center justify-content-center">
+                <h4 class="text-center">Update E-mail Address</h4>
+                <form asp-action="UpdateEmail" method="post" class="w-100 mt-3">
+                    <div class="form-group mb-3">
+                        <label asp-for="NewEmail" class="form-label"></label>
+                        <input asp-for="NewEmail" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Update E-mail Address</button>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a asp-action="UserPanel">Back to User Panel</a>
+        </div>
+    </div>
+</div>

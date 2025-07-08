@@ -1,0 +1,51 @@
+﻿@model user_panel.Data.Cabin
+
+@{
+    ViewData["Title"] = "Create Reservation";
+    // Generate time slots for the dropdown (e.g., 9:00, 10:00... 17:00)
+    var timeSlots = Enumerable.Range(9, 9).Select(h => new SelectListItem
+    {
+        Value = h.ToString(),
+        Text = $"{h:00}:00 - {h + 1:00}:00"
+    });
+}
+
+<div class="container container-main">
+    <div class="card-custom">
+        <h4 class="text-center">Book: @Model.Location</h4>
+        <p class="text-center text-muted">@Model.Description</p>
+        <hr style="border-color: var(--border-color);" />
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+
+        <form asp-action="Create" method="post">
+            <input type="hidden" name="cabinId" value="@Model.Id" />
+
+            <div class="mb-3">
+                <label for="bookingDate" class="form-label">Select Date</label>
+                <input type="date" id="bookingDate" name="bookingDate" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+            </div>
+
+            <div class="mb-4">
+                <label for="startTimeHour" class="form-label">Select Time Slot</label>
+                <select id="startTimeHour" name="startTimeHour" class="form-select" style="background-color: #3d3d45; border-color: var(--border-color); color: var(--text-light);" required>
+                    <option value="">-- Choose a time --</option>
+                    @foreach (var slot in timeSlots)
+                    {
+                        <option value="@slot.Value">@slot.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Confirm Booking for @Model.PricePerHour.ToString("C")</button>
+            </div>
+            <div class="text-center mt-3">
+                <a asp-action="Index">Back to Cabin List</a>
+            </div>
+        </form>
+    </div>
+</div>

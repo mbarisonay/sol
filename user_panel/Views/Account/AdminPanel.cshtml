@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Admin Panel";
+    bool isVerified = ViewBag.AdminVerified == true;
+}
+
+<div class="container container-main-large">
+    <div class="card-custom">
+        <h2>Admin Access</h2>
+
+        @if (!isVerified)
+        {
+            <p class="mt-3 text-muted">Enter admin credentials to continue:</p>
+
+            @if (TempData["LoginError"] != null)
+            {
+                <div class="alert alert-danger mt-2">
+                    @TempData["LoginError"]
+                </div>
+            }
+
+            <form asp-action="AdminLogin" method="post" class="mt-3">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input name="Username" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input name="Password" type="password" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        }
+        else
+        {
+            <h4 class="mt-4">Welcome, Admin</h4>
+
+            @if (TempData["StatusMessage"] != null)
+            {
+                <div class="alert alert-success mt-3" role="alert">
+                    @TempData["StatusMessage"]
+                </div>
+            }
+
+            <div class="mt-4">
+                <h5>Add New Cabin</h5>
+                <hr style="border-color: var(--border-color);" />
+                <form asp-action="AddCabin" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input name="Location" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="Description" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cost ($)</label>
+                        <input name="PricePerHour" type="number" class="form-control" required />
+                    </div>
+                    <button type="submit" class="btn btn-success">Add Cabin</button>
+                </form>
+            </div>
+
+            <div class="mt-4">
+                <form asp-action="LogoutAdmin" method="post">
+                    <button class="btn btn-danger">Logout</button>
+                </form>
+            </div>
+        }
+    </div>
+</div>

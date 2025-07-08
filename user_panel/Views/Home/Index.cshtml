@@ -1,0 +1,91 @@
+﻿@*
+    This is the main view for your Home page.
+    It will display a Google Map.
+*@
+@{
+    ViewData["Title"] = "Map Page";
+
+    // DOĞRU: ViewData’dan GoogleMapsApiKey anahtarıyla al
+    var apiKey = ViewData["GoogleMapsApiKey"] as string;
+}
+
+@* 
+    This is a safety check. 
+    If the API key is not found, it shows a helpful error message to the developer.
+    This part of the code will not be visible if your key is configured correctly.
+*@
+@if (string.IsNullOrEmpty(apiKey))
+{
+    <div class="text-center">
+        <h1 class="display-4 text-danger">Configuration Error</h1>
+        <p class="lead">The Google Maps API key is missing.</p>
+        <p>Please make sure you have set it using the command:</p>
+        <code class="d-block bg-light p-3">dotnet user-secrets set "GoogleMaps:ApiKey" "AIzaSyA8D4toLWhdieE3j2CFoIV6mzUiSUpWCY0"</code>
+    </div>
+}
+else
+{
+    @*
+    ===============================================================
+    REPLACEABLE SECTION 1: Page Content
+    You can change the H1 and P tags below to whatever you like.
+    ===============================================================
+    *@
+    <div class="text-center">
+        <h1 class="display-4">My Awesome Map</h1>
+        <p>This map is rendered in a .NET Core application using a secure API key.</p>
+    </div>
+
+    <!-- This is the HTML element where the map will be displayed. It must have an ID. -->
+    <div id="map" style="height: 500px; width: 100%; border-radius: 8px; border: 1px solid #dee2e6;"></div>
+}
+
+
+@*
+    This section injects the JavaScript into the bottom of your page's body,
+    which is the best practice for web performance.
+*@
+@section Scripts {
+    @if (!string.IsNullOrEmpty(apiKey))
+    {
+        <script>
+            // This function will be called by Google Maps once the API has finished loading.
+            function initMap() {
+
+                /*
+                ===============================================================
+                REPLACEABLE SECTION 2: Map Customization
+                Change the lat, lng, and zoom level here to set the map's
+                default location and zoom.
+                ===============================================================
+                */
+                const mapOptions = {
+                    // Coordinates for New York City
+                    center: { lat: 40.7128, lng: -74.0060 },
+
+                    // How zoomed in the map should be (1 = World, 20 = Building)
+                    zoom: 12
+                };
+
+                // Creates the new map object
+                const map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+                // (Optional) Add a marker to the map at the center point
+                new google.maps.Marker({
+                    position: mapOptions.center,
+                    map: map,
+                    title: "Hello World!"
+                });
+            }
+        </script>
+
+        <!--
+        This script tag loads the Google Maps JavaScript API.
+        - The API key is safely injected using Razor syntax: @apiKey
+        - 'callback=initMap' tells Google to run our 'initMap' function when it's ready.
+        - 'async' and 'defer' are important for performance; they don't block page loading.
+        -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=@apiKey&callback=initMap&v=weekly"
+                async defer></script>
+    }
+}

@@ -1,0 +1,47 @@
+﻿@using user_panel.Data
+@model ApplicationUser
+@{
+    ViewData["Title"] = "User Panel";
+}
+
+<div class="container container-main-large">
+    <div class="card-custom">
+        <h2>Welcome, @Model.FirstName</h2>
+
+        @if (TempData["StatusMessage"] != null)
+        {
+            <div class="alert alert-success mt-3" role="alert">
+                @TempData["StatusMessage"]
+            </div>
+        }
+
+        <div class="credit-balance-box mt-4">
+            <div class="balance-label">Credit Balance</div>
+            <div class="balance-amount">@Model.CreditBalance.ToString("C")</div>
+            <a class="btn btn-sm btn-success" asp-action="AddCredit">Add Credit</a>
+        </div>
+
+        <div class="mt-4 user-details">
+            <h5>Account Details</h5>
+            <hr style="border-color: var(--border-color);" />
+            <dl class="row">
+                <dt class="col-sm-4">Full Name</dt>
+                <dd class="col-sm-8">@Model.FirstName @Model.LastName</dd>
+
+                <dt class="col-sm-4">E-mail Address</dt>
+                <dd class="col-sm-8">@Model.Email</dd>
+
+                <dt class="col-sm-4">Phone Number</dt>
+                <dd class="col-sm-8">@Model.PhoneNumber</dd>
+            </dl>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-start gap-2">
+            <a class="btn btn-warning" asp-action="ChangePassword">Change Password</a>
+            <a class="btn btn-info" asp-action="UpdateInformation">Update Information</a>
+            <form class="d-inline" asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
