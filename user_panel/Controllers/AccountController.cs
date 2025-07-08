@@ -2,19 +2,80 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using user_panel.Data;       // Your ApplicationUser model
-using user_panel.ViewModels; // Your ViewModels
+using user_panel.Data;       
+using user_panel.ViewModels; 
 using System.Linq;
 using System.Threading.Tasks;
 using user_panel.Context;
 using user_panel.Services.Entity.ApplicationUserServices;
 using user_panel.Services.Entity.CabinReservationServices;
 using user_panel.Services.Entity.CabinServices;
+using System.Security.Claims;
+using user_panel.Models;
+using System;
+
+
 
 namespace user_panel.Controllers
 {
     public class AccountController : Controller
     {
+        [HttpPost]
+        [Authorize] // Ensures only logged-in users can call this
+        [ValidateAntiForgeryToken] // Protects against CSRF attacks
+        public async Task<IActionResult> ValidateQrCode([FromBody] QrCodeScanModel model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.QrData))
+            {
+                return BadRequest(new { success = false, message = "Invalid QR code data." });
+            }
+
+            // 1. Get the current logged-in user's ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { success = false, message = "User not authenticated." });
+            }
+
+            // 2. We assume the QR code contains the Cabin's ID as a number.
+            // Try to parse it.
+            if (!int.TryParse(model.QrData, out int cabinId))
+            {
+                return BadRequest(new { success = false, message = "Invalid QR Code format. Expected a Cabin ID." });
+            }
+
+            // 3. Get the current time on the server to prevent client-side time manipulation
+            var now = DateTime.UtcNow;
+
+            // 4. Find an active reservation for this user and cabin at the current time
+            var validReservation = await _context.Reservations
+                .FirstOrDefaultAsync(r =>
+                    r.UserId == userId &&
+                    r.CabinId == cabinId &&
+                    r.ReservationStartTime <= now &&
+                    r.ReservationEndTime >= now);
+
+            if (validReservation != null)
+            {
+                // SUCCESS: The user has a valid, active reservation for this cabin.
+                // In a real-world scenario, you would trigger the door unlocking mechanism here.
+                return Ok(new { success = true, message = "Reservation confirmed! The door is now unlocked." });
+            }
+            else
+            {
+                // FAILURE: No matching reservation found.
+                // Check if a reservation exists but for a different time to give a better error message.
+                var futureReservation = await _context.Reservations
+                    .AnyAsync(r => r.UserId == userId && r.CabinId == cabinId && r.ReservationStartTime > now);
+
+                if (futureReservation)
+                {
+                    return BadRequest(new { success = false, message = "Access denied. Your reservation for this cabin is in the future. Please come back at the scheduled time." });
+                }
+
+                return BadRequest(new { success = false, message = "Access denied. No active reservation found for you at this cabin." });
+            }
+        }
         private readonly IApplicationUserService _userService;
         private readonly ICabinService _cabinService;
 
