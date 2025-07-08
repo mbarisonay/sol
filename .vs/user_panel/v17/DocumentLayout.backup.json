@@ -1,0 +1,104 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\mbari\\source\\repos\\sol\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\services\\entity\\cabinreservationservices\\cabinreservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\services\\entity\\cabinreservationservices\\cabinreservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\services\\entity\\cabinreservationservices\\icabinreservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\services\\entity\\cabinreservationservices\\icabinreservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Program.cs",
+              "RelativeDocumentMoniker": "user_panel\\Program.cs",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Program.cs",
+              "RelativeToolTip": "user_panel\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T10:10:46.749Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ICabinReservationService.cs",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Services\\Entity\\CabinReservationServices\\ICabinReservationService.cs",
+              "RelativeDocumentMoniker": "user_panel\\Services\\Entity\\CabinReservationServices\\ICabinReservationService.cs",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Services\\Entity\\CabinReservationServices\\ICabinReservationService.cs",
+              "RelativeToolTip": "user_panel\\Services\\Entity\\CabinReservationServices\\ICabinReservationService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T10:10:02.491Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CabinReservationService.cs",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Services\\Entity\\CabinReservationServices\\CabinReservationService.cs",
+              "RelativeDocumentMoniker": "user_panel\\Services\\Entity\\CabinReservationServices\\CabinReservationService.cs",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Services\\Entity\\CabinReservationServices\\CabinReservationService.cs",
+              "RelativeToolTip": "user_panel\\Services\\Entity\\CabinReservationServices\\CabinReservationService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T10:07:38.22Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "user_panel\\Controllers\\AccountController.cs",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "user_panel\\Controllers\\AccountController.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAEwDIAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T10:04:26.288Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
