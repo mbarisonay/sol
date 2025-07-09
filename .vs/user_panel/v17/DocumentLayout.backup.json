@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\mbari\\source\\repos\\sol\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\services\\entity\\cabinreservationservices\\cabinreservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\services\\entity\\cabinreservationservices\\cabinreservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\services\\entity\\cabinreservationservices\\icabinreservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\services\\entity\\cabinreservationservices\\icabinreservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\views\\account\\updateinformation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\views\\account\\updateinformation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\views\\account\\userpanel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\views\\account\\userpanel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,60 +22,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Program.cs",
-              "RelativeDocumentMoniker": "user_panel\\Program.cs",
-              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Program.cs",
-              "RelativeToolTip": "user_panel\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T10:10:46.749Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ICabinReservationService.cs",
-              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Services\\Entity\\CabinReservationServices\\ICabinReservationService.cs",
-              "RelativeDocumentMoniker": "user_panel\\Services\\Entity\\CabinReservationServices\\ICabinReservationService.cs",
-              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Services\\Entity\\CabinReservationServices\\ICabinReservationService.cs",
-              "RelativeToolTip": "user_panel\\Services\\Entity\\CabinReservationServices\\ICabinReservationService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T10:10:02.491Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CabinReservationService.cs",
-              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Services\\Entity\\CabinReservationServices\\CabinReservationService.cs",
-              "RelativeDocumentMoniker": "user_panel\\Services\\Entity\\CabinReservationServices\\CabinReservationService.cs",
-              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Services\\Entity\\CabinReservationServices\\CabinReservationService.cs",
-              "RelativeToolTip": "user_panel\\Services\\Entity\\CabinReservationServices\\CabinReservationService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T10:07:38.22Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AccountController.cs",
-              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Controllers\\AccountController.cs",
-              "RelativeDocumentMoniker": "user_panel\\Controllers\\AccountController.cs",
-              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Controllers\\AccountController.cs",
-              "RelativeToolTip": "user_panel\\Controllers\\AccountController.cs",
-              "ViewState": "AgIAACcAAAAAAAAAAAAEwDIAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T10:04:26.288Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
@@ -95,6 +39,45 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UpdateInformation.cshtml",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Views\\Account\\UpdateInformation.cshtml",
+              "RelativeDocumentMoniker": "user_panel\\Views\\Account\\UpdateInformation.cshtml",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Views\\Account\\UpdateInformation.cshtml",
+              "RelativeToolTip": "user_panel\\Views\\Account\\UpdateInformation.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-08T11:03:14.419Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "user_panel\\Controllers\\AccountController.cs",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Controllers\\AccountController.cs*",
+              "RelativeToolTip": "user_panel\\Controllers\\AccountController.cs*",
+              "ViewState": "AgIAAI0AAAAAAAAAAAAYwKsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T10:32:22.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserPanel.cshtml",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Views\\Account\\UserPanel.cshtml",
+              "RelativeDocumentMoniker": "user_panel\\Views\\Account\\UserPanel.cshtml",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Views\\Account\\UserPanel.cshtml*",
+              "RelativeToolTip": "user_panel\\Views\\Account\\UserPanel.cshtml*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADsAAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-08T10:27:14.313Z",
+              "EditorCaption": ""
             }
           ]
         }
