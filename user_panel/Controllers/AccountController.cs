@@ -16,6 +16,7 @@ namespace user_panel.Controllers
     public class AccountController : Controller
     {
         private readonly IApplicationUserService _userService;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ICabinService _cabinService;
 
         public AccountController(IApplicationUserService userService, ICabinService cabinService)
@@ -79,9 +80,42 @@ namespace user_panel.Controllers
         public async Task<IActionResult> UserPanel()
         {
             var user = await _userService.GetCurrentUserAsync(User);
-            if (user == null)
-                return NotFound($"Unable to load user with ID '{User.Identity?.Name}'.");
+            if (user == null) { 
+            return NotFound($"Unable to load user with ID '{User.Identity?.Name}'.");
+        }
             return View(user);
+        }
+        [Authorize]
+        public IActionResult ScanQr()
+        {
+            return View();
+        }
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProcessQrCode([FromBody] string qrCodeData)
+        {
+            if (string.IsNullOrEmpty(qrCodeData))
+            {
+                return Json(new { success = false, message = "QR code data was empty." });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+
+            // --- YOUR LOGIC GOES HERE ---
+            // For now, we will just log it to the console for demonstration.
+            // In a real application, you might:
+            // - Look up the qrCodeData in a database.
+            // - Assign an item to the user.
+            // - Validate a ticket or pass.
+            // - Redirect the user to a specific page.
+
+            Console.WriteLine($"User '{user.UserName}' scanned QR Code with data: '{qrCodeData}'");
+
+            // --- Example Response ---
+            // You can return different data based on your logic.
+            // For example, if the code is valid, you could return a redirect URL.
+            return Json(new { success = true, message = "QR Code received successfully." });
         }
 
         [HttpGet]
