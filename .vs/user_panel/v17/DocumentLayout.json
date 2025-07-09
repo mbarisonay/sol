@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\mbari\\source\\repos\\sol\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Migrations\\20250709112046_UpdateApplicationUser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:user_panel\\Migrations\\20250709112046_UpdateApplicationUser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\entity\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\entity\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|c:\\users\\mbari\\source\\repos\\sol\\user_panel\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{896804B6-57BC-43F7-9194-40EE7A5D8DB2}|user_panel\\user_panel.csproj|solutionrelative:user_panel\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -47,6 +55,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "20250709112046_UpdateApplicationUser.cs",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Migrations\\20250709112046_UpdateApplicationUser.cs",
+              "RelativeDocumentMoniker": "user_panel\\Migrations\\20250709112046_UpdateApplicationUser.cs",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Migrations\\20250709112046_UpdateApplicationUser.cs",
+              "RelativeToolTip": "user_panel\\Migrations\\20250709112046_UpdateApplicationUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T11:20:46.607Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ApplicationUser.cs",
+              "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Entity\\ApplicationUser.cs",
+              "RelativeDocumentMoniker": "user_panel\\Entity\\ApplicationUser.cs",
+              "ToolTip": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Entity\\ApplicationUser.cs",
+              "RelativeToolTip": "user_panel\\Entity\\ApplicationUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T11:18:55.134Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\appsettings.json",
               "RelativeDocumentMoniker": "user_panel\\appsettings.json",
@@ -59,7 +93,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "UpdateInformation.cshtml",
               "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Views\\Account\\UpdateInformation.cshtml",
               "RelativeDocumentMoniker": "user_panel\\Views\\Account\\UpdateInformation.cshtml",
@@ -67,12 +101,11 @@
               "RelativeToolTip": "user_panel\\Views\\Account\\UpdateInformation.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-08T11:03:14.419Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-08T11:03:14.419Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "AccountController.cs",
               "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "user_panel\\Controllers\\AccountController.cs",
@@ -84,7 +117,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "UserPanel.cshtml",
               "DocumentMoniker": "C:\\Users\\mbari\\source\\repos\\sol\\user_panel\\Views\\Account\\UserPanel.cshtml",
               "RelativeDocumentMoniker": "user_panel\\Views\\Account\\UserPanel.cshtml",

@@ -10,6 +10,7 @@ using user_panel.Context;
 using user_panel.Services.Entity.ApplicationUserServices;
 using user_panel.Services.Entity.CabinReservationServices;
 using user_panel.Services.Entity.CabinServices;
+using user_panel.ViewModels;
 
 namespace user_panel.Controllers
 {
@@ -86,10 +87,6 @@ namespace user_panel.Controllers
             return View(user);
         }
         [Authorize]
-        public IActionResult ScanQr()
-        {
-            return View();
-        }
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
