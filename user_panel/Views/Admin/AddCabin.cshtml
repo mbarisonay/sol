@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewData["Title"] = "Add New Cabin";
+}
+
+<div class="container container-main-large">
+    <div class="card-custom">
+        <h2>Admin Access</h2>
+        <h4 class="mt-4">Add New Cabin</h4>
+        <hr style="border-color: var(--border-color);" />
+
+        <form asp-action="AddCabin" method="post">
+            <div class="mb-3">
+                <label class="form-label">Location</label>
+                <input name="Location" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="Description" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Cost ($)</label>
+                <input name="PricePerHour" type="number" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-success">Add Cabin</button>
+            <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary">Back to Admin Panel</a>
+        </form>
+    </div>
+</div>

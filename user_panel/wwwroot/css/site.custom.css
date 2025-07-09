@@ -1,0 +1,187 @@
+﻿/* --- Color Palette & Theme --- */
+:root {
+    --bg-dark: #1a1a1d; /* Dark background */
+    --bg-card: #2c2c34; /* Slightly lighter card background */
+    --text-light: #f0f0f0; /* Light text color */
+    --text-muted: #a9a9a9; /* Lighter, muted text */
+    --brand-accent: #49c5b6; /* A vibrant teal for accents */
+    --brand-accent-hover: #3caea3;
+    --border-color: #444;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: 'Poppins', sans-serif;
+    padding-top: 70px; /* Adjust for fixed navbar */
+}
+
+/* --- Navigation Bar --- */
+.navbar {
+    background-color: var(--bg-card) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.navbar-brand {
+    color: var(--brand-accent) !important;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    color: var(--text-muted) !important;
+    font-weight: 400;
+}
+
+    .nav-link:hover, .nav-link.active {
+        color: var(--text-light) !important;
+    }
+
+/* --- Main Container for Centering Content --- */
+.container-main {
+    max-width: 500px;
+    margin-top: 5vh;
+}
+
+.container-main-large {
+    max-width: 800px;
+    margin-top: 5vh;
+}
+
+/* --- Custom Card Styling for Forms --- */
+.card-custom {
+    background-color: var(--bg-card);
+    border: none;
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+    .card-custom h1, .card-custom h2, .card-custom h4 {
+        color: var(--text-light);
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+/* --- Form Input Styling --- */
+.form-control, .form-floating > .form-control {
+    background-color: #3d3d45;
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    border-radius: 8px;
+    padding: 12px 15px;
+}
+
+    .form-control:focus, .form-floating > .form-control:focus {
+        background-color: #4f4f5a;
+        color: #fff;
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 0.25rem rgba(73, 197, 182, 0.25);
+    }
+
+.form-label, .form-floating > label {
+    color: var(--text-muted);
+}
+
+.form-floating > .form-control:focus ~ label {
+    color: var(--brand-accent);
+}
+
+.text-danger {
+    font-weight: 300;
+    font-size: 0.85em;
+}
+
+/* --- Button Styling --- */
+.btn-primary {
+    background-color: var(--brand-accent);
+    border-color: var(--brand-accent);
+    font-weight: 500;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .btn-primary:hover {
+        background-color: var(--brand-accent-hover);
+        border-color: var(--brand-accent-hover);
+    }
+
+.btn-danger {
+    background-color: #c94e4e;
+    border-color: #c94e4e;
+}
+
+.btn-warning {
+    background-color: #d4a24a;
+    border-color: #d4a24a;
+    color: #1a1a1d;
+}
+
+.btn-info {
+    background-color: #3e95a2;
+    border-color: #3e95a2;
+}
+
+.btn-success {
+    background-color: #2a9d8f;
+    border-color: #2a9d8f;
+}
+
+a {
+    color: var(--brand-accent);
+    text-decoration: none;
+}
+
+    a:hover {
+        color: var(--brand-accent-hover);
+    }
+
+/* --- User Panel Specific Styles --- */
+.credit-balance-box {
+    background-color: rgba(73, 197, 182, 0.1);
+    border: 1px solid var(--brand-accent);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+    .credit-balance-box .balance-label {
+        font-size: 0.9em;
+        font-weight: 300;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .credit-balance-box .balance-amount {
+        font-size: 2.5em;
+        font-weight: 700;
+        color: var(--brand-accent);
+        margin: 5px 0 15px 0;
+    }
+
+.user-details dt {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.user-details dd {
+    font-weight: 500;
+    font-size: 1.1em;
+}
+
+/* --- Update Information Page Styles --- */
+.update-section {
+    padding: 30px;
+    min-height: 250px;
+}
+
+/* --- Alert Messages --- */
+.alert-success {
+    background-color: #2a9d8f;
+    color: var(--text-light);
+    border: none;
+}

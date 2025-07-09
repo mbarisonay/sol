@@ -1,0 +1,59 @@
+﻿@model IEnumerable<user_panel.Data.Booking>
+
+@{
+    ViewData["Title"] = "My Reservations";
+}
+
+<div class="container container-main-large">
+    <div class="card-custom">
+        <h2 class="text-center">@ViewData["Title"]</h2>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
+        }
+
+        @if (!Model.Any())
+        {
+            <p class="text-center text-muted mt-4">You have no reservations yet.</p>
+            <div class="text-center">
+                <a class="btn btn-primary" asp-action="Index">Book Your First Cabin</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive mt-4">
+                <table class="table" style="color: var(--text-light);">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model)
+                        {
+                            <tr>
+                                <td>@booking.Cabin.Location</td>
+                                <td>@booking.StartTime.ToString("MMMM dd, yyyy")</td>
+                                <td>@booking.StartTime.ToString("HH:mm") - @booking.EndTime.ToString("HH:mm")</td>
+                                <td>
+                                    @if (booking.StartTime > DateTime.Now)
+                                    {
+                                        <span class="badge bg-success">Upcoming</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Completed</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
