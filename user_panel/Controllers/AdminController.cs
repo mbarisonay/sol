@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using user_panel.Data;
 using user_panel.Services.Entity.ApplicationUserServices;
 using user_panel.Services.Entity.CabinServices;
+using user_panel.Services.Entity.BookingServices;
 using user_panel.ViewModels;
 
 namespace user_panel.Controllers
@@ -12,11 +13,13 @@ namespace user_panel.Controllers
     {
         private readonly IApplicationUserService _userService;
         private readonly ICabinService _cabinService;
+        private readonly IBookingService _bookingService;
 
-        public AdminController(IApplicationUserService userService, ICabinService cabinService)
+        public AdminController(IBookingService bookingService, IApplicationUserService userService, ICabinService cabinService)
         {
             _userService = userService;
             _cabinService = cabinService;
+            _bookingService = bookingService;
         }
 
         [HttpGet]
@@ -140,6 +143,30 @@ namespace user_panel.Controllers
                 ? "User deleted successfully."
                 : "Failed to delete user.";
             return RedirectToAction("ManageUser");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageBookings()
+        {
+            var result = await _bookingService.GetAllBookingsAsync();
+            return View(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteBooking(int id)
+        {
+            await _bookingService.DeleteAsync(id);
+            TempData["StatusMessage"] = "Booking deleted successfully.";
+            return RedirectToAction("ManageBookings");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteBookingAndRefund(int id, string userId, decimal credit)
+        {
+            await _bookingService.DeleteAsync(id);
+            await _userService.AddCreditAsync(userId, credit);
+            TempData["StatusMessage"] = "Booking deleted successfully.";
+            return RedirectToAction("ManageBookings");
         }
     }
 }

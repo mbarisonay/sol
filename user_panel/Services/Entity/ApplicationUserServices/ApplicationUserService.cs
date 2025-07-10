@@ -222,6 +222,13 @@ namespace user_panel.Services.Entity.ApplicationUserServices
         {
             return await _userManager.SetPhoneNumberAsync(user, newPhoneNumber);
         }
+
+        public async Task<IdentityResult> AddCreditAsync(string userId, decimal credit)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            user.CreditBalance = user.CreditBalance + credit;
+            return await _userManager.UpdateAsync(user);
+        }
     }
 
 }

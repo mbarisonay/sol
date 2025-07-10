@@ -1,0 +1,77 @@
+﻿@model IEnumerable<user_panel.Data.Booking>
+
+@{
+    ViewData["Title"] = "Manage Bookings";
+}
+
+<div class="container container-main-large text-light">
+    <div class="card-custom bg-dark text-light">
+        <h2>Manage Bookings</h2>
+
+        @if (TempData["StatusMessage"] != null)
+        {
+            <div class="alert alert-info mt-3">@TempData["StatusMessage"]</div>
+        }
+
+        @if (!Model.Any())
+        {
+            <p>No bookings found.</p>
+        }
+        else
+        {
+            <table class="table table-bordered table-dark table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Cabin</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        <tr>
+                            <td>@booking.Id</td>
+                            <td>@booking.ApplicationUser.FirstName @booking.ApplicationUser.LastName</td>
+                            <td>@booking.Cabin.Location</td>
+                            <td>@booking.StartTime</td>
+                            <td>@booking.EndTime</td>
+                            <td>@booking.Cabin.PricePerHour.ToString("C")</td>
+                            @if (booking.StartTime > DateTime.Now)
+                            {
+                                <td>Upcoming</td>
+                                <td>
+                                    <form asp-action="DeleteBookingAndRefund" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@booking.Id" />
+                                        <input type="hidden" name="userId" value="@booking.ApplicationUser.Id" />
+                                        <input type="hidden" name="credit" value="@booking.Cabin.PricePerHour" />
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Delete & Refund
+                                        </button>
+                                    </form>
+
+                                </td>
+                            }
+                            else
+                            {
+                                <td>Completed</td>
+                                <td>
+                                    <form asp-action="DeleteBooking" asp-route-id="@booking.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

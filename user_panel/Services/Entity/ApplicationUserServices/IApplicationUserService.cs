@@ -21,5 +21,6 @@ namespace user_panel.Services.Entity.ApplicationUserServices
         Task<IdentityResult> UpdatePhoneNumberAsync(ApplicationUser user, string newPhoneNumber);
         Task<IdentityResult> AddCreditAsync(ApplicationUser user, decimal amount);
         string? GetCurrentUserId(ClaimsPrincipal userPrincipal);
+        Task<IdentityResult> AddCreditAsync(string userId, decimal credit);
     }
 }

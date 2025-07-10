@@ -17,6 +17,15 @@ namespace user_panel.Services.Entity.BookingServices
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Booking>> GetAllBookingsAsync()
+        {
+            return await _dbSet
+                .Include(b => b.ApplicationUser)
+                .Include(b => b.Cabin)
+                .OrderByDescending(b => b.StartTime)
+                .ToListAsync();
+        }
+
         public async Task<bool> AnyAsync(Expression<Func<Booking, bool>> predicate)
         {
             return await _dbSet.AnyAsync(predicate);

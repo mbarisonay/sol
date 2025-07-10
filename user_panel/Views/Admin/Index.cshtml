@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Admin Panel Dashboard";
 }
 
@@ -28,7 +27,9 @@
                 <a asp-action="ManageUser" asp-controller="Admin" class="list-group-item list-group-item-action">
                     Manage Users
                 </a>
-                <a href="#" class="list-group-item list-group-item-action disabled">Manage Bookings (WIP)</a>
+                <a asp-action="ManageBookings" asp-controller="Admin" class="list-group-item list-group-item-action">
+                    Manage Bookings
+                </a>
             </div>
         </div>
     </div>
