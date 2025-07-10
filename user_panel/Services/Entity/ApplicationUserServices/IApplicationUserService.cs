@@ -19,6 +19,7 @@ namespace user_panel.Services.Entity.ApplicationUserServices
         Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, ChangePasswordViewModel model);
         Task<IdentityResult> UpdateEmailAsync(ApplicationUser user, string newEmail);
         Task<IdentityResult> UpdatePhoneNumberAsync(ApplicationUser user, string newPhoneNumber);
+        Task<IdentityResult> AddCreditAsync(ApplicationUser user, decimal amount);
         string? GetCurrentUserId(ClaimsPrincipal userPrincipal);
     }
 }

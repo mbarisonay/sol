@@ -161,6 +161,25 @@ namespace user_panel.Services.Entity.ApplicationUserServices
 
             return true;
         }
+        public async Task<IdentityResult> AddCreditAsync(ApplicationUser user, decimal amount)
+        {
+            if (user == null)
+            {
+                // Or throw an ArgumentNullException
+                return IdentityResult.Failed(new IdentityError { Description = "User cannot be null." });
+            }
+
+            if (amount <= 0)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Credit amount must be positive." });
+            }
+
+            user.CreditBalance += amount;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return IdentityResult.Success;
+        }
 
         public async Task<bool> DeleteUserAsync(string id)
         {
