@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using user_panel.Data;
 using System;
-using System.Linq; // Added for .ToList() if needed
+using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic; // Added for List<T>
+using System.Collections.Generic;
 using user_panel.Services.Entity.ApplicationUserServices;
 using user_panel.Services.Entity.BookingServices;
 using user_panel.Services.Entity.CabinServices;
+using user_panel.ViewModels; // <-- ADD THIS USING STATEMENT
 
 namespace user_panel.Controllers
 {
@@ -26,27 +26,50 @@ namespace user_panel.Controllers
             _userService = userService;
         }
 
-        // --- SIMPLIFIED INDEX ACTION ---
-        // The controller's only responsibility is to get ALL cabins and send them to the view.
-        // The view's JavaScript will handle the live filtering.
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            // Using ToList() is a safe practice in case the base method returns IEnumerable.
-            var cabins = (await _cabinService.GetAllAsync()).ToList();
+            ViewData["CurrentFilter"] = searchString;
+            List<Cabin> cabins;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                cabins = await _cabinService.SearchAsync(searchString);
+            }
+            else
+            {
+                cabins = (await _cabinService.GetAllAsync()).ToList();
+            }
             return View(cabins);
         }
 
-        // --- UNCHANGED ACTIONS BELOW ---
-
+        // === UPGRADED CREATE GET ACTION ===
         [HttpGet]
-        public async Task<IActionResult> Create(int id)
+        public async Task<IActionResult> Create(int id, DateTime? bookingDate)
         {
             var cabin = await _cabinService.GetByIdAsync(id);
             if (cabin == null) return NotFound();
-            return View(cabin);
+
+            // Use the provided date or default to today.
+            var date = bookingDate.HasValue ? bookingDate.Value.Date : DateTime.Today;
+
+            // Fetch all bookings for this specific cabin on the selected date.
+            var bookingsForDate = await _bookingService.GetWhereAsync(b =>
+                b.CabinId == id && b.StartTime.Date == date);
+
+            // Create the ViewModel and populate it.
+            var viewModel = new CreateBookingViewModel
+            {
+                Cabin = cabin,
+                BookingDate = date,
+                // Extract the hour from each existing booking's start time.
+                BookedHours = bookingsForDate.Select(b => b.StartTime.Hour).ToList()
+            };
+
+            return View(viewModel);
         }
 
+        // --- UNCHANGED CREATE POST ACTION ---
+        // The existing server-side validation is still valuable as a backup.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int cabinId, DateTime bookingDate, int startTimeHour)
@@ -59,31 +82,28 @@ namespace user_panel.Controllers
             var bookingEndTime = bookingStartTime.AddHours(1);
             var bookingCost = cabin.PricePerHour;
 
+            // Server-side check for past times (important security check)
+            if (bookingStartTime < DateTime.Now)
+            {
+                TempData["ErrorMessage"] = "Cannot book a time slot in the past.";
+                return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
+            }
+
             if (currentUser.CreditBalance < bookingCost)
             {
                 TempData["ErrorMessage"] = $"Insufficient funds. Your balance is {currentUser.CreditBalance:C}, but the booking costs {bookingCost:C}.";
-                return RedirectToAction("Create", new { id = cabinId });
+                return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
             }
 
-            var overlapping = await _bookingService
-                .AnyAsync(b => b.CabinId == cabinId &&
-                               bookingStartTime < b.EndTime &&
-                               bookingEndTime > b.StartTime);
+            var overlapping = await _bookingService.AnyAsync(b => b.CabinId == cabinId && bookingStartTime < b.EndTime && bookingEndTime > b.StartTime);
 
             if (overlapping)
             {
                 TempData["ErrorMessage"] = "This time slot is already booked. Please choose another time.";
-                return RedirectToAction("Create", new { id = cabinId });
+                return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
             }
 
-            var newBooking = new Booking
-            {
-                ApplicationUserId = currentUser.Id,
-                CabinId = cabinId,
-                StartTime = bookingStartTime,
-                EndTime = bookingEndTime
-            };
-
+            var newBooking = new Booking { ApplicationUserId = currentUser.Id, CabinId = cabinId, StartTime = bookingStartTime, EndTime = bookingEndTime };
             currentUser.CreditBalance -= bookingCost;
             await _bookingService.CreateAsync(newBooking);
             await _userService.UpdateAsync(currentUser);
@@ -97,7 +117,6 @@ namespace user_panel.Controllers
         {
             var user = await _userService.GetCurrentUserAsync(User);
             if (user == null) return Unauthorized();
-
             var bookings = await _bookingService.GetAllWithCabinForUserAsync(user.Id);
             return View(bookings);
         }

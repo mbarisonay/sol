@@ -30,5 +30,11 @@ namespace user_panel.Services.Entity.BookingServices
         {
             return await _dbSet.AnyAsync(predicate);
         }
+        public async Task<List<Booking>> GetWhereAsync(Expression<Func<Booking, bool>> predicate)
+        {
+            return await _context.Bookings
+                .Where(predicate) // Apply the dynamic WHERE clause
+                .ToListAsync();
+        }
     }
 }

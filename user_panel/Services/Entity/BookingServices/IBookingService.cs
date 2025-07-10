@@ -9,5 +9,6 @@ namespace user_panel.Services.Entity.BookingServices
         Task<IEnumerable<Booking>> GetAllWithCabinForUserAsync(string userId);
         Task<IEnumerable<Booking>> GetAllBookingsAsync();
         Task<bool> AnyAsync(Expression<Func<Booking, bool>> predicate);
+        Task<List<Booking>> GetWhereAsync(Expression<Func<Booking, bool>> predicate);
     }
 }
