@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using user_panel.Data;
 using System;
-using System.Linq;
+using System.Linq; // Added for .ToList() if needed
 using System.Threading.Tasks;
-using user_panel.Context;
+using System.Collections.Generic; // Added for List<T>
 using user_panel.Services.Entity.ApplicationUserServices;
 using user_panel.Services.Entity.BookingServices;
 using user_panel.Services.Entity.CabinServices;
@@ -27,12 +26,18 @@ namespace user_panel.Controllers
             _userService = userService;
         }
 
+        // --- SIMPLIFIED INDEX ACTION ---
+        // The controller's only responsibility is to get ALL cabins and send them to the view.
+        // The view's JavaScript will handle the live filtering.
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var cabins = await _cabinService.GetAllAsync();
+            // Using ToList() is a safe practice in case the base method returns IEnumerable.
+            var cabins = (await _cabinService.GetAllAsync()).ToList();
             return View(cabins);
         }
+
+        // --- UNCHANGED ACTIONS BELOW ---
 
         [HttpGet]
         public async Task<IActionResult> Create(int id)
