@@ -1,0 +1,60 @@
+﻿@model IEnumerable<user_panel.ViewModels.ApplicationUserViewModel>
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<div class="container container-main-large">
+    <div class="card-custom">
+        <h2>Manage Users</h2>
+        <h4 class="mt-4">Registered Users:</h4>
+        <hr style="border-color: var(--border-color);" />
+
+        @if (TempData["StatusMessage"] != null)
+        {
+            <div class="alert alert-info mt-3" role="alert">
+                @TempData["StatusMessage"]
+            </div>
+        }
+
+        @if (Model == null || !Model.Any())
+        {
+            <p class="text-muted mt-3">No users found. Please add some first.</p>
+        }
+        else
+        {
+            <div class="user-list mt-4">
+                @foreach (var user in Model)
+                {
+                    <div class="card mb-3 shadow-sm border-0 rounded-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-2">@user.FirstName @user.LastName</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Email: @user.Email</h6>
+                            <p class="card-text text-secondary">
+                                Username: @user.UserName <br />
+                                Phone: @user.PhoneNumber <br />
+                                Credit: @user.CreditBalance.ToString("C") <br />
+                                Role: <span class="badge bg-@(user.Role == "Admin" ? "danger" : "primary")">@user.Role</span>
+                            </p>
+                            <div class="d-flex justify-content-end mt-3">
+                                <a asp-action="EditUser" asp-controller="Admin" asp-route-id="@user.Id" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil me-2"></i> Edit User
+                                </a>
+                                <form asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@user.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger ms-2">
+                                        <i class="bi bi-trash me-2"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="mt-4">
+            <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i> Back to Admin Panel
+            </a>
+        </div>
+    </div>
+</div>

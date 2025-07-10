@@ -60,7 +60,6 @@ namespace user_panel.Controllers
         [HttpGet]
         public async Task<IActionResult> EditCabin(int id)
         {
-            ViewData["Title"] = "Edit Cabin";
             var cabin = await _cabinService.GetByIdAsync(id);
 
             if (cabin == null)
@@ -75,8 +74,6 @@ namespace user_panel.Controllers
         [HttpPost]
         public async Task<IActionResult> EditCabin(Cabin model)
         {
-            ViewData["Title"] = "Edit Cabin";
-
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -102,6 +99,47 @@ namespace user_panel.Controllers
 
             TempData["StatusMessage"] = $"Cabin '{cabinToDelete.Location}' successfully deleted.";
             return RedirectToAction("UpdateCabin");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageUser()
+        {
+            var user = await _userService.GetAllUsersWithRolesAsync();
+            return View(user);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditUser(string id)
+        {
+            var model = await _userService.GetUserForEditAsync(id);
+            if (model == null) return NotFound();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var success = await _userService.UpdateUserAsync(model);
+            if (!success)
+            {
+                ModelState.AddModelError("", "Failed to update user.");
+                return View(model);
+            }
+
+            TempData["StatusMessage"] = "User updated successfully.";
+            return RedirectToAction("ManageUser");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var success = await _userService.DeleteUserAsync(id);
+            TempData["StatusMessage"] = success
+                ? "User deleted successfully."
+                : "Failed to delete user.";
+            return RedirectToAction("ManageUser");
         }
     }
 }

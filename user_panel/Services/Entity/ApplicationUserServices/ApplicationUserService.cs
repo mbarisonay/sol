@@ -89,6 +89,88 @@ namespace user_panel.Services.Entity.ApplicationUserServices
             return new LoginServiceResultViewModel { SignInResult = signInResult, ErrorMessage = "Invalid login attempt." };
         }
 
+        public async Task<List<ApplicationUserViewModel>> GetAllUsersWithRolesAsync()
+        {
+            var users = _userManager.Users.ToList();
+            var result = new List<ApplicationUserViewModel>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var role = roles.FirstOrDefault() ?? "Unknown";
+
+                result.Add(new ApplicationUserViewModel
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    PhoneNumber = user.PhoneNumber,
+                    CreditBalance = user.CreditBalance,
+                    Role = role
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<EditUserViewModel?> GetUserForEditAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault() ?? "Customer";
+
+            return new EditUserViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email!,
+                PhoneNumber = user.PhoneNumber,
+                CreditBalance = user.CreditBalance,
+                Role = role
+            };
+        }
+
+        public async Task<bool> UpdateUserAsync(EditUserViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null) return false;
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+            user.CreditBalance = model.CreditBalance;
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded) return false;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var currentRole = roles.FirstOrDefault();
+
+            if (currentRole != model.Role)
+            {
+                if (currentRole != null)
+                    await _userManager.RemoveFromRoleAsync(user, currentRole);
+                await _userManager.AddToRoleAsync(user, model.Role);
+            }
+
+            return true;
+        }
+
+        public async Task<bool> DeleteUserAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return false;
+
+            var result = await _userManager.DeleteAsync(user);
+            return result.Succeeded;
+        }
+
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();

@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("user_panel")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8bd32588596171d07aae94e8fb180590c56aa373")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5e50c5297caa445097c8cdb897ecac116bfa48ad")]
 [assembly: System.Reflection.AssemblyProductAttribute("user_panel")]
 [assembly: System.Reflection.AssemblyTitleAttribute("user_panel")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
