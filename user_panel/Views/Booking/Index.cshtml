@@ -54,9 +54,11 @@
                         <div class="card-body d-flex flex-column">
                             <!-- (No changes in this HTML section) -->
                             <h5 class="card-title cabin-location" style="color: var(--brand-accent);">
-                                <span class="location-hover" data-location="@cabin.Location">
-                                    @cabin.Location
-                                </span>
+                                <a asp-action="Details" asp-route-id="@cabin.Id" style="text-decoration: none; color: inherit;">
+                                    <span class="location-hover" data-location="@cabin.Location">
+                                        @cabin.Location
+                                    </span>
+                                </a>
                             </h5>
                             <p class="card-text text-light flex-grow-1 cabin-description">@cabin.Description</p>
                             <div class="d-flex justify-content-between align-items-center">

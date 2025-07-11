@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using user_panel.Services.Entity.ApplicationUserServices;
 using user_panel.Services.Entity.BookingServices;
 using user_panel.Services.Entity.CabinServices;
-using user_panel.ViewModels; // <-- ADD THIS USING STATEMENT
+using user_panel.ViewModels;
 
 namespace user_panel.Controllers
 {
@@ -42,26 +42,48 @@ namespace user_panel.Controllers
             return View(cabins);
         }
 
-        // === UPGRADED CREATE GET ACTION ===
+        // ===================================================================
+        // === NEW "DETAILS" ACTION ADDED HERE ===
+        // This action handles requests for the new details page.
+        // It uses the existing ICabinService to fetch the data.
+        // ===================================================================
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Use the injected service to get the cabin by its ID
+            var cabin = await _cabinService.GetByIdAsync(id.Value);
+
+            if (cabin == null)
+            {
+                return NotFound(); // Return 404 if no cabin with that ID exists
+            }
+
+            // Pass the found cabin object to the Details.cshtml view
+            return View(cabin);
+        }
+
+
+        // === UPGRADED CREATE GET ACTION (Unchanged) ===
         [HttpGet]
         public async Task<IActionResult> Create(int id, DateTime? bookingDate)
         {
             var cabin = await _cabinService.GetByIdAsync(id);
             if (cabin == null) return NotFound();
 
-            // Use the provided date or default to today.
             var date = bookingDate.HasValue ? bookingDate.Value.Date : DateTime.Today;
 
-            // Fetch all bookings for this specific cabin on the selected date.
             var bookingsForDate = await _bookingService.GetWhereAsync(b =>
                 b.CabinId == id && b.StartTime.Date == date);
 
-            // Create the ViewModel and populate it.
             var viewModel = new CreateBookingViewModel
             {
                 Cabin = cabin,
                 BookingDate = date,
-                // Extract the hour from each existing booking's start time.
                 BookedHours = bookingsForDate.Select(b => b.StartTime.Hour).ToList()
             };
 
@@ -69,7 +91,6 @@ namespace user_panel.Controllers
         }
 
         // --- UNCHANGED CREATE POST ACTION ---
-        // The existing server-side validation is still valuable as a backup.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int cabinId, DateTime bookingDate, int startTimeHour)
@@ -82,7 +103,6 @@ namespace user_panel.Controllers
             var bookingEndTime = bookingStartTime.AddHours(1);
             var bookingCost = cabin.PricePerHour;
 
-            // Server-side check for past times (important security check)
             if (bookingStartTime < DateTime.Now)
             {
                 TempData["ErrorMessage"] = "Cannot book a time slot in the past.";
