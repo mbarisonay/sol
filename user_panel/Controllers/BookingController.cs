@@ -42,11 +42,6 @@ namespace user_panel.Controllers
             return View(cabins);
         }
 
-        // ===================================================================
-        // === NEW "DETAILS" ACTION ADDED HERE ===
-        // This action handles requests for the new details page.
-        // It uses the existing ICabinService to fetch the data.
-        // ===================================================================
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -54,28 +49,37 @@ namespace user_panel.Controllers
             {
                 return NotFound();
             }
-
-            // Use the injected service to get the cabin by its ID
             var cabin = await _cabinService.GetByIdAsync(id.Value);
-
             if (cabin == null)
             {
-                return NotFound(); // Return 404 if no cabin with that ID exists
+                return NotFound();
             }
-
-            // Pass the found cabin object to the Details.cshtml view
             return View(cabin);
         }
 
-
-        // === UPGRADED CREATE GET ACTION (Unchanged) ===
+        // ===================================================================
+        // === THIS IS THE REPLACED AND UPGRADED CREATE GET ACTION ===
+        // ===================================================================
         [HttpGet]
         public async Task<IActionResult> Create(int id, DateTime? bookingDate)
         {
             var cabin = await _cabinService.GetByIdAsync(id);
             if (cabin == null) return NotFound();
 
-            var date = bookingDate.HasValue ? bookingDate.Value.Date : DateTime.Today;
+            // --- Start of new logic ---
+            // 1. Get today's date to use as the minimum selectable date.
+            var today = DateTime.Today;
+
+            // 2. Set the min and max dates for the calendar input, formatted correctly.
+            ViewData["MinDate"] = today.ToString("yyyy-MM-dd");
+            ViewData["MaxDate"] = today.AddDays(90).ToString("yyyy-MM-dd"); // Limit booking to 90 days in the future
+
+            // 3. Determine the date to display. If the user provides a date, use it,
+            // but only if it's not in the past. Otherwise, default to today.
+            var date = (bookingDate.HasValue && bookingDate.Value.Date >= today)
+                       ? bookingDate.Value.Date
+                       : today;
+            // --- End of new logic ---
 
             var bookingsForDate = await _bookingService.GetWhereAsync(b =>
                 b.CabinId == id && b.StartTime.Date == date);
@@ -90,7 +94,7 @@ namespace user_panel.Controllers
             return View(viewModel);
         }
 
-        // --- UNCHANGED CREATE POST ACTION ---
+        // --- The Create POST action remains unchanged ---
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int cabinId, DateTime bookingDate, int startTimeHour)
