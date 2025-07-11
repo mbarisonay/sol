@@ -4,12 +4,46 @@
     ViewData["Title"] = "Select a Cabin to Book";
 }
 
+<!-- =================================================================== -->
+<!-- 1. CSS for the map pop-up and the interactive location text -->
+<!-- =================================================================== -->
+<style>
+    /* Add a pointer and underline to signal that the location is interactive */
+    .location-hover {
+        cursor: pointer;
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-decoration-color: var(--brand-accent);
+    }
+
+    /* The container for our pop-up map. Hidden by default. */
+    #map-popup {
+        display: none;
+        position: absolute;
+        width: 350px;
+        height: 300px;
+        background-color: #ffffff;
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        padding: 5px;
+        z-index: 1050; /* Ensures it appears on top of other content */
+    }
+
+    /* The actual map canvas inside the pop-up */
+    #map-canvas {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+    }
+</style>
+
 <div class="container container-main-large">
     <div class="card-custom">
         <h2 class="text-center">@ViewData["Title"]</h2>
         <p class="text-center text-muted mb-4">Choose a location to make a reservation.</p>
 
-        <!-- Search Bar (No changes here) -->
+        <!-- Search Bar -->
         <div class="mb-4">
             <input type="text" id="cabinSearchInput" class="form-control"
                    placeholder="Type to filter by location or description..." aria-label="Search" />
@@ -19,15 +53,18 @@
             @foreach (var cabin in Model)
             {
                 <div class="col-md-6 cabin-card-container">
-                    <!-- === STYLING FIXES APPLIED TO THIS CARD === -->
                     <div class="card h-100" style="background-color: #3d3d45; border-color: var(--border-color);">
                         <div class="card-body d-flex flex-column">
-                            <!-- Title color restored -->
-                            <h5 class="card-title cabin-location" style="color: var(--brand-accent);">@cabin.Location</h5>
-                            <!-- Description text color restored -->
+                            <!-- =================================================================== -->
+                            <!-- 2. The Location text is now wrapped in an interactive span -->
+                            <!-- =================================================================== -->
+                            <h5 class="card-title cabin-location" style="color: var(--brand-accent);">
+                                <span class="location-hover" data-location="@cabin.Location">
+                                    @cabin.Location
+                                </span>
+                            </h5>
                             <p class="card-text text-light flex-grow-1 cabin-description">@cabin.Description</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <!-- Price text color restored -->
                                 <span class="fs-5 fw-bold" style="color: var(--text-light);">@cabin.PricePerHour.ToString("C")/hour</span>
                                 <a asp-controller="Booking" asp-action="Create" asp-route-id="@cabin.Id" class="btn btn-primary">Book Now</a>
                             </div>
@@ -37,17 +74,24 @@
             }
         </div>
 
-        <!-- No Results Message (No changes here) -->
+        <!-- No Results Message -->
         <div id="noResultsMessage" class="alert alert-warning text-center mt-4" style="display: none;">
             No cabins match your search.
         </div>
     </div>
 </div>
 
+<!-- =================================================================== -->
+<!-- 3. The hidden HTML container for the map pop-up -->
+<!-- =================================================================== -->
+<div id="map-popup">
+    <div id="map-canvas"></div>
+</div>
+
 
 @section Scripts {
+    <!-- Your existing search filter script (untouched) -->
     <script>
-        // Your excellent client-side filtering script (No changes here)
         document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('cabinSearchInput');
             const cabinCards = document.querySelectorAll('.cabin-card-container');
@@ -58,7 +102,7 @@
                 let visibleCards = 0;
 
                 cabinCards.forEach(function (card) {
-                    const location = card.querySelector('.cabin-location').textContent.toLowerCase();
+                    const location = card.querySelector('.cabin-location').textContent.trim().toLowerCase();
                     const description = card.querySelector('.cabin-description').textContent.toLowerCase();
                     if (location.includes(searchTerm) || description.includes(searchTerm)) {
                         card.style.display = 'block';
@@ -72,4 +116,77 @@
             });
         });
     </script>
+
+    <!-- =================================================================== -->
+    <!-- 4. New JavaScript for Google Maps functionality -->
+    <!-- Note: This requires jQuery, which is usually included in _Layout.cshtml -->
+    <!-- =================================================================== -->
+    <script>
+        // Global variables to hold the single map, marker, and geocoder instances
+        let map;
+        let marker;
+        let geocoder;
+
+        // This is the entry point, called by the Google Maps script after it loads
+        function initMap() {
+            const initialLocation = { lat: 39.9334, lng: 32.8597 }; // Center of Turkey
+
+            map = new google.maps.Map(document.getElementById("map-canvas"), {
+                zoom: 12,
+                center: initialLocation,
+                disableDefaultUI: true, // A cleaner look for a popup
+            });
+
+            marker = new google.maps.Marker({ map: map });
+            geocoder = new google.maps.Geocoder();
+        }
+
+        // This function takes an address, finds its coordinates, and updates the map
+        function showLocationOnMap(address) {
+            // Appending ", Turkey" helps the geocoder find the location more accurately
+            geocoder.geocode({ 'address': address + ', Turkey' }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const location = results[0].geometry.location;
+                    map.setCenter(location);
+                    marker.setPosition(location);
+                    marker.setMap(map);
+                } else {
+                    console.error(`Geocode failed for "${address}" with status: ${status}`);
+                    marker.setMap(null); // Hide marker if location not found
+                }
+            });
+        }
+
+        // Using jQuery to handle the hover events
+        $(document).ready(function () {
+            const mapPopup = $('#map-popup');
+
+            // When the mouse enters a location span...
+            $('.location-hover').on('mouseenter', function(e) {
+                const locationName = $(this).data('location');
+
+                // Position the map popup near the cursor with a small offset
+                mapPopup.css({
+                    top: e.pageY + 15 + 'px',
+                    left: e.pageX + 15 + 'px'
+                });
+
+                showLocationOnMap(locationName);
+                mapPopup.show();
+            });
+
+            // When the mouse leaves the location span...
+            $('.location-hover').on('mouseleave', function() {
+                mapPopup.hide();
+            });
+        });
+
+    </script>
+
+    <!-- =================================================================== -->
+    <!-- 5. Google Maps API Script Tag -->
+    <!-- IMPORTANT: Replace YOUR_API_KEY with your actual Google Maps API Key. -->
+    <!-- This key needs Maps JavaScript API & Geocoding API enabled. -->
+    <!-- =================================================================== -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8D4toLWhdieE3j2CFoIV6mzUiSUpWCY0&callback=initMap"></script>
 }
