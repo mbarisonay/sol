@@ -13,6 +13,8 @@ namespace user_panel.Services.Entity.BookingServices
             return await _dbSet
                 .Where(b => b.ApplicationUserId == userId)
                 .Include(b => b.Cabin)
+                    .ThenInclude(c => c.District)
+                    .ThenInclude(d => d.City)
                 .OrderByDescending(b => b.StartTime)
                 .ToListAsync();
         }
@@ -22,6 +24,8 @@ namespace user_panel.Services.Entity.BookingServices
             return await _dbSet
                 .Include(b => b.ApplicationUser)
                 .Include(b => b.Cabin)
+                    .ThenInclude(c => c.District)
+                                        .ThenInclude(d => d.City)
                 .OrderByDescending(b => b.StartTime)
                 .ToListAsync();
         }

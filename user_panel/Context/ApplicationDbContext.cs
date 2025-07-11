@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using user_panel.Context.EntityConfiguration;
 using user_panel.Context.Helpers;
 using user_panel.Data;
+using user_panel.Entity;
 
 namespace user_panel.Context
 {
@@ -17,6 +18,8 @@ namespace user_panel.Context
 
         public DbSet<Cabin> Cabins { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<District> Districts { get; set; }
+        public DbSet<City> Cities { get; set; }
         public DbSet<user_panel.Models.ImageModel> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

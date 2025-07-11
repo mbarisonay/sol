@@ -10,23 +10,42 @@ namespace user_panel.Services.Entity.CabinServices
 {
     public class CabinService(ApplicationDbContext context) : EntityService<Cabin, int>(context), ICabinService
     {
+        public async Task<List<Cabin>> GetCabinsWithLocationAsync()
+        {
+            return await _context.Cabins
+                .Include(c => c.District)
+                    .ThenInclude(d => d.City)
+                .ToListAsync();
+        }
+
+
+        public async Task<Cabin?> GetCabinWithLocationByIdAsync(int cabinId)
+        {
+            return await _context.Cabins
+                .Include(c => c.District)
+                    .ThenInclude(d => d.City)
+                .FirstOrDefaultAsync(c => c.Id == cabinId);
+        }
+
         public async Task<List<Cabin>> SearchAsync(string searchTerm)
         {
-            var query = _context.Set<Cabin>().AsQueryable();
+            var query = _context.Cabins
+                .Include(c => c.District)
+                .ThenInclude(d => d.City)
+                .AsQueryable();
+
             var sanitizedSearchTerm = searchTerm?.Trim().ToLower();
 
             if (string.IsNullOrEmpty(sanitizedSearchTerm))
             {
-                // THIS IS THE FIX:
-                // 1. Await the base method to get the IEnumerable<Cabin>.
-                var allCabins = await base.GetAllAsync();
-                // 2. Convert the IEnumerable<Cabin> to a List<Cabin> before returning.
+                var allCabins = await GetAllAsync();
                 return allCabins.ToList();
             }
 
             query = query.Where(c =>
-                c.Location.ToLower().Contains(sanitizedSearchTerm) ||
-                c.Description.ToLower().Contains(sanitizedSearchTerm));
+                c.Description.ToLower().Contains(sanitizedSearchTerm) ||
+                c.District.Name.ToLower().Contains(sanitizedSearchTerm) ||
+                c.District.City.Name.ToLower().Contains(sanitizedSearchTerm));
 
             return await query.ToListAsync();
         }

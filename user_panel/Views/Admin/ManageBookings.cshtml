@@ -38,10 +38,13 @@
                         <tr>
                             <td>@booking.Id</td>
                             <td>@booking.ApplicationUser.FirstName @booking.ApplicationUser.LastName</td>
-                            <td>@booking.Cabin.Location</td>
+                            <td>
+                                📍 @booking.Cabin.District.City.Name / @booking.Cabin.District.Name
+                            </td>
                             <td>@booking.StartTime</td>
                             <td>@booking.EndTime</td>
                             <td>@booking.Cabin.PricePerHour.ToString("C")</td>
+
                             @if (booking.StartTime > DateTime.Now)
                             {
                                 <td>Upcoming</td>
@@ -54,7 +57,6 @@
                                             <i class="bi bi-trash"></i> Delete & Refund
                                         </button>
                                     </form>
-
                                 </td>
                             }
                             else

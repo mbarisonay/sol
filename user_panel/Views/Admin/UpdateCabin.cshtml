@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<user_panel.Data.Cabin>
+
 @{
     ViewData["Title"] = "Update Existing Cabin";
 }
@@ -30,9 +31,14 @@
                 {
                     <div class="card mb-3 shadow-sm border-0 rounded-3">
                         <div class="card-body">
-                            <h5 class="card-title text-primary mb-2">@cabin.Location</h5>
-                            <h6 class="card-subtitle mb-3 text-muted">Cost: @cabin.PricePerHour.ToString("C") per hour</h6>
+                            <h5 class="card-title text-primary mb-2">
+                                📍 @cabin.District.City.Name / @cabin.District.Name
+                            </h5>
+                            <h6 class="card-subtitle mb-3 text-muted">
+                                💰 Cost: @cabin.PricePerHour.ToString("C") per hour
+                            </h6>
                             <p class="card-text text-secondary">@cabin.Description</p>
+
                             <div class="d-flex justify-content-end mt-3">
                                 <a asp-action="EditCabin" asp-controller="Admin" asp-route-id="@cabin.Id" class="btn btn-sm btn-warning">
                                     <i class="bi bi-pencil me-2"></i> Edit Cabin

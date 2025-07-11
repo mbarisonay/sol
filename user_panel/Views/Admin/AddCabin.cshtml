@@ -1,29 +1,82 @@
-﻿
+﻿@model user_panel.ViewModels.CabinInfoViewModel
+
 @{
     ViewData["Title"] = "Add New Cabin";
+    var cities = ViewBag.Cities as List<SelectListItem>;
 }
 
 <div class="container container-main-large">
-    <div class="card-custom">
+    <div class="card-custom p-4">
         <h2>Admin Access</h2>
         <h4 class="mt-4">Add New Cabin</h4>
         <hr style="border-color: var(--border-color);" />
 
         <form asp-action="AddCabin" method="post">
             <div class="mb-3">
-                <label class="form-label">Location</label>
-                <input name="Location" class="form-control" required />
+                <label asp-for="CityId" class="form-label">City</label>
+                <select asp-for="CityId" class="form-select" asp-items="cities" id="citySelect" required>
+                    <option value="">-- Select City --</option>
+                </select>
+                <span asp-validation-for="CityId" class="text-danger small"></span>
             </div>
+
             <div class="mb-3">
-                <label class="form-label">Description</label>
-                <textarea name="Description" class="form-control" rows="3" required></textarea>
+                <label asp-for="DistrictId" class="form-label">District</label>
+                <select asp-for="DistrictId" class="form-select" id="districtSelect" required>
+                    <option value="">-- Select District --</option>
+                </select>
+                <span asp-validation-for="DistrictId" class="text-danger small"></span>
             </div>
+
             <div class="mb-3">
-                <label class="form-label">Cost ($)</label>
-                <input name="PricePerHour" type="number" class="form-control" required />
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="3" required></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
             </div>
+
+            <div class="mb-3">
+                <label asp-for="PricePerHour" class="form-label">Cost ($)</label>
+                <input asp-for="PricePerHour" type="number" step="0.01" class="form-control" required />
+                <span asp-validation-for="PricePerHour" class="text-danger small"></span>
+            </div>
+
             <button type="submit" class="btn btn-success">Add Cabin</button>
             <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary">Back to Admin Panel</a>
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const citySelect = document.getElementById('citySelect');
+        const districtSelect = document.getElementById('districtSelect');
+
+        // Başta pasif yap
+        districtSelect.disabled = true;
+
+        citySelect.addEventListener('change', function () {
+            const cityId = this.value;
+
+            if (!cityId) {
+                districtSelect.innerHTML = '<option value="">-- Select District --</option>';
+                districtSelect.disabled = true;
+                return;
+            }
+
+            districtSelect.disabled = false;
+            districtSelect.innerHTML = '<option value="">Loading...</option>';
+
+            fetch(`/Admin/GetDistrictsByCity/${cityId}`)
+                .then(response => response.json())
+                .then(data => {
+                    districtSelect.innerHTML = '<option value="">-- Select District --</option>';
+                    data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.value;
+                        opt.textContent = item.text;
+                        districtSelect.appendChild(opt);
+                    });
+                });
+        });
+    </script>
+}

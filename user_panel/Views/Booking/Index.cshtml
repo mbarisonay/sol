@@ -55,8 +55,8 @@
                             <!-- (No changes in this HTML section) -->
                             <h5 class="card-title cabin-location" style="color: var(--brand-accent);">
                                 <a asp-action="Details" asp-route-id="@cabin.Id" style="text-decoration: none; color: inherit;">
-                                    <span class="location-hover" data-location="@cabin.Location">
-                                        @cabin.Location
+                                    <span class="location-hover" data-location="@($"{cabin.District.Name}, {cabin.District.City.Name}")">
+                                        @cabin.District.City.Name / @cabin.District.Name
                                     </span>
                                 </a>
                             </h5>

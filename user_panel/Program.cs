@@ -7,6 +7,8 @@ using user_panel.Services.Entity.ApplicationUserServices;
 using user_panel.Services.Entity.BookingServices;
 using user_panel.Services.Entity.CabinReservationServices;
 using user_panel.Services.Entity.CabinServices;
+using user_panel.Services.Entity.CityServices;
+using user_panel.Services.Entity.DistrictServices;
 using user_panel.Settings;
 
 
@@ -39,6 +41,8 @@ builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICabinReservationService, CabinReservationService>();
 builder.Services.AddScoped<ICabinService, CabinService>();
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<IDistrictService, DistrictService>();
 
 builder.Services.Configure<GoogleMapsSettings>(
     builder.Configuration.GetSection(GoogleMapsSettings.SectionName)

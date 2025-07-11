@@ -257,9 +257,6 @@ namespace user_panel.Migrations
                     b.Property<int>("CabinId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CheckInTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -272,7 +269,7 @@ namespace user_panel.Migrations
 
                     b.HasIndex("CabinId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("user_panel.Data.Cabin", b =>
@@ -287,61 +284,17 @@ namespace user_panel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int>("DistrictId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("PricePerHour")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("cab", (string)null);
+                    b.HasIndex("DistrictId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "A modern, compact cabin perfect for a high-intensity workout. Equipped with a smart treadmill and weight set.",
-                            Location = "Bornova/İzmir",
-                            PricePerHour = 25.00m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Spacious cabin with a focus on yoga and flexibility. Includes a full-length mirror and yoga mats.",
-                            Location = "Karşıyaka/İzmir",
-                            PricePerHour = 25.00m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Premium cabin featuring a rowing machine and advanced monitoring systems for performance tracking.",
-                            Location = "Çankaya/Ankara",
-                            PricePerHour = 30.00m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Standard cabin with essential cardio and strength training equipment. Great for a balanced workout.",
-                            Location = "Akyurt/Ankara",
-                            PricePerHour = 20.00m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "An urban-style cabin with a boxing bag and a high-performance stationary bike.",
-                            Location = "Beşiktaş/İstanbul",
-                            PricePerHour = 35.00m
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "Historic district cabin offering a quiet and serene environment for mindful exercise and meditation.",
-                            Location = "Fatih/İstanbul",
-                            PricePerHour = 30.00m
-                        });
+                    b.ToTable("cab", (string)null);
                 });
 
             modelBuilder.Entity("user_panel.Data.CabinReservation", b =>
@@ -375,7 +328,48 @@ namespace user_panel.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("CabinReservation");
+                    b.ToTable("CabinReservation", (string)null);
+                });
+
+            modelBuilder.Entity("user_panel.Entity.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("city", (string)null);
+                });
+
+            modelBuilder.Entity("user_panel.Entity.District", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("district", (string)null);
                 });
 
             modelBuilder.Entity("user_panel.Models.ImageModel", b =>
@@ -396,7 +390,7 @@ namespace user_panel.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -469,6 +463,17 @@ namespace user_panel.Migrations
                     b.Navigation("Cabin");
                 });
 
+            modelBuilder.Entity("user_panel.Data.Cabin", b =>
+                {
+                    b.HasOne("user_panel.Entity.District", "District")
+                        .WithMany("Cabins")
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("District");
+                });
+
             modelBuilder.Entity("user_panel.Data.CabinReservation", b =>
                 {
                     b.HasOne("ApplicationUser", "ApplicationUser")
@@ -478,6 +483,17 @@ namespace user_panel.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("user_panel.Entity.District", b =>
+                {
+                    b.HasOne("user_panel.Entity.City", "City")
+                        .WithMany("Districts")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("City");
                 });
 
             modelBuilder.Entity("ApplicationUser", b =>
@@ -490,6 +506,16 @@ namespace user_panel.Migrations
             modelBuilder.Entity("user_panel.Data.Cabin", b =>
                 {
                     b.Navigation("Bookings");
+                });
+
+            modelBuilder.Entity("user_panel.Entity.City", b =>
+                {
+                    b.Navigation("Districts");
+                });
+
+            modelBuilder.Entity("user_panel.Entity.District", b =>
+                {
+                    b.Navigation("Cabins");
                 });
 #pragma warning restore 612, 618
         }

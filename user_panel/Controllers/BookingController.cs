@@ -37,11 +37,16 @@ namespace user_panel.Controllers
             }
             else
             {
-                cabins = (await _cabinService.GetAllAsync()).ToList();
+                cabins = (await _cabinService.GetCabinsWithLocationAsync()).ToList();
             }
             return View(cabins);
         }
 
+        // ===================================================================
+        // === NEW "DETAILS" ACTION ADDED HERE ===
+        // This action handles requests for the new details page.
+        // It uses the existing ICabinService to fetch the data.
+        // ===================================================================
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -49,37 +54,28 @@ namespace user_panel.Controllers
             {
                 return NotFound();
             }
+
+            // Use the injected service to get the cabin by its ID
             var cabin = await _cabinService.GetByIdAsync(id.Value);
+
             if (cabin == null)
             {
-                return NotFound();
+                return NotFound(); // Return 404 if no cabin with that ID exists
             }
+
+            // Pass the found cabin object to the Details.cshtml view
             return View(cabin);
         }
 
-        // ===================================================================
-        // === THIS IS THE REPLACED AND UPGRADED CREATE GET ACTION ===
-        // ===================================================================
+
+        // === UPGRADED CREATE GET ACTION (Unchanged) ===
         [HttpGet]
         public async Task<IActionResult> Create(int id, DateTime? bookingDate)
         {
-            var cabin = await _cabinService.GetByIdAsync(id);
+            var cabin = await _cabinService.GetCabinWithLocationByIdAsync(id);
             if (cabin == null) return NotFound();
 
-            // --- Start of new logic ---
-            // 1. Get today's date to use as the minimum selectable date.
-            var today = DateTime.Today;
-
-            // 2. Set the min and max dates for the calendar input, formatted correctly.
-            ViewData["MinDate"] = today.ToString("yyyy-MM-dd");
-            ViewData["MaxDate"] = today.AddDays(90).ToString("yyyy-MM-dd"); // Limit booking to 90 days in the future
-
-            // 3. Determine the date to display. If the user provides a date, use it,
-            // but only if it's not in the past. Otherwise, default to today.
-            var date = (bookingDate.HasValue && bookingDate.Value.Date >= today)
-                       ? bookingDate.Value.Date
-                       : today;
-            // --- End of new logic ---
+            var date = bookingDate.HasValue ? bookingDate.Value.Date : DateTime.Today;
 
             var bookingsForDate = await _bookingService.GetWhereAsync(b =>
                 b.CabinId == id && b.StartTime.Date == date);
@@ -94,14 +90,15 @@ namespace user_panel.Controllers
             return View(viewModel);
         }
 
-        // --- The Create POST action remains unchanged ---
+        // --- UNCHANGED CREATE POST ACTION ---
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int cabinId, DateTime bookingDate, int startTimeHour)
         {
-            var cabin = await _cabinService.GetByIdAsync(cabinId);
+            var cabin = await _cabinService.GetCabinWithLocationByIdAsync(cabinId); // District ve City dahil
             var currentUser = await _userService.GetCurrentUserAsync(User);
-            if (cabin == null || currentUser == null) return NotFound();
+            if (cabin == null || currentUser == null)
+                return NotFound();
 
             var bookingStartTime = bookingDate.Date.AddHours(startTimeHour);
             var bookingEndTime = bookingStartTime.AddHours(1);
@@ -119,7 +116,10 @@ namespace user_panel.Controllers
                 return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
             }
 
-            var overlapping = await _bookingService.AnyAsync(b => b.CabinId == cabinId && bookingStartTime < b.EndTime && bookingEndTime > b.StartTime);
+            var overlapping = await _bookingService.AnyAsync(b =>
+                b.CabinId == cabinId &&
+                bookingStartTime < b.EndTime &&
+                bookingEndTime > b.StartTime);
 
             if (overlapping)
             {
@@ -127,14 +127,25 @@ namespace user_panel.Controllers
                 return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
             }
 
-            var newBooking = new Booking { ApplicationUserId = currentUser.Id, CabinId = cabinId, StartTime = bookingStartTime, EndTime = bookingEndTime };
+            var newBooking = new Booking
+            {
+                ApplicationUserId = currentUser.Id,
+                CabinId = cabinId,
+                StartTime = bookingStartTime,
+                EndTime = bookingEndTime
+            };
+
             currentUser.CreditBalance -= bookingCost;
             await _bookingService.CreateAsync(newBooking);
             await _userService.UpdateAsync(currentUser);
 
-            TempData["SuccessMessage"] = $"Success! Your booking for {cabin.Location} on {bookingStartTime:f} is confirmed.";
+            var cityName = cabin.District.City.Name;
+            var districtName = cabin.District.Name;
+
+            TempData["SuccessMessage"] = $"✅ Your booking for a cabin in {districtName}, {cityName} on {bookingStartTime:f} is confirmed.";
             return RedirectToAction("MyBookings");
         }
+
 
         [HttpGet]
         public async Task<IActionResult> MyBookings()

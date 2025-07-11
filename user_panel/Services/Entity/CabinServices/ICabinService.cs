@@ -7,6 +7,8 @@ namespace user_panel.Services.Entity.CabinServices
 {
     public interface ICabinService : IEntityService<Cabin, int>
     {
+        Task<List<Cabin>> GetCabinsWithLocationAsync();
+        Task<Cabin?> GetCabinWithLocationByIdAsync(int cabinId);
         // This method definition is correct, it just needed the using statements above.
         Task<List<Cabin>> SearchAsync(string searchTerm);
     }
