@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Xv/+BVHVVKA=",
+  "dgSpecHash": "6BtJMX+hYeo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\mbari\\source\\repos\\StajKabinSistemi\\user_panel\\user_panel.csproj",
+  "projectFilePath": "C:\\Users\\mbari\\Desktop\\Yeni klasör (3)\\StajKabinSistemi-706faf6d738e48439424e9fc9c2e44088a082bf2\\user_panel\\user_panel.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mbari\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\mbari\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

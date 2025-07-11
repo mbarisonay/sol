@@ -8,11 +8,16 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <!-- "My Panel" is the link to the user's account management page -->
-            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My Panel</a>
+            <a class="nav-link" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
         </li>
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <a class="nav-link" asp-controller="Booking" asp-action="Index">Book a Cabin</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Account" asp-action="UserPanel" title="Manage">My Panel</a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
                 <button type="submit" class="nav-link btn btn-link">Logout</button>
             </form>
         </li>
@@ -20,10 +25,10 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
         </li>
     }
 </ul>
