@@ -269,7 +269,7 @@ namespace user_panel.Migrations
 
                     b.HasIndex("CabinId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("user_panel.Data.Cabin", b =>
@@ -372,7 +372,7 @@ namespace user_panel.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("CabinReservation");
+                    b.ToTable("CabinReservation", (string)null);
                 });
 
             modelBuilder.Entity("user_panel.Models.ImageModel", b =>
@@ -393,7 +393,7 @@ namespace user_panel.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

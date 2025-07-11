@@ -185,3 +185,22 @@ a {
     color: var(--text-light);
     border: none;
 }
+.status-active {
+    background-color: #28a745 !important; /* Green */
+    color: white;
+}
+
+.status-used {
+    background-color: #dc3545 !important; /* Red - Gym-tired */
+    color: white;
+}
+
+.status-missed {
+    background-color: #ffc107 !important; /* Yellow - Couch potato */
+    color: black;
+}
+
+.status-upcoming {
+    background-color: #007bff !important; /* Blue - Gym-thirsty */
+    color: white;
+}

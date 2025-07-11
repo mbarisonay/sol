@@ -1,29 +1,24 @@
 ﻿@model IEnumerable<user_panel.Data.Booking>
 
 @{
-    ViewData["Title"] = "My Reservations";
+    ViewData["Title"] = "My Bookings";
 }
 
 <div class="container container-main-large">
     <div class="card-custom">
         <h2 class="text-center">@ViewData["Title"]</h2>
-
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
-        }
+        <p class="text-center text-muted mb-4">Here is a list of your past and upcoming reservations.</p>
 
         @if (!Model.Any())
         {
-            <p class="text-center text-muted mt-4">You have no reservations yet.</p>
-            <div class="text-center">
-                <a class="btn btn-primary" asp-action="Index">Book Your First Cabin</a>
+            <div class="alert alert-info text-center">
+                You have no bookings yet. Why not <a asp-action="Index" class="alert-link">book a cabin</a>?
             </div>
         }
         else
         {
-            <div class="table-responsive mt-4">
-                <table class="table" style="color: var(--text-light);">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
                     <thead>
                         <tr>
                             <th>Location</th>
@@ -33,21 +28,47 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var booking in Model)
+                        @foreach (var item in Model.OrderByDescending(b => b.StartTime))
                         {
+                            // ===================================================================
+                            // === DYNAMIC STATUS LOGIC BASED ON YOUR RULES ===
+                            // ===================================================================
+                            var now = DateTime.UtcNow;
+                            string statusLabel;
+                            string statusClass;
+
+                            if (now >= item.StartTime && now < item.EndTime)
+                            {
+                                statusLabel = "Active";
+                                statusClass = "status-active";
+                            }
+                            else if (now >= item.EndTime) // Booking has passed
+                            {
+                                if (item.CheckInTime != null)
+                                {
+                                    statusLabel = "Gym-tired";
+                                    statusClass = "status-used";
+                                }
+                                else
+                                {
+                                    statusLabel = "Couch potato";
+                                    statusClass = "status-missed";
+                                }
+                            }
+                            else // Booking is in the future
+                            {
+                                statusLabel = "Gym-thirsty";
+                                statusClass = "status-upcoming";
+                            }
+                            // ===================================================================
+
                             <tr>
-                                <td>@booking.Cabin.Location</td>
-                                <td>@booking.StartTime.ToString("MMMM dd, yyyy")</td>
-                                <td>@booking.StartTime.ToString("HH:mm") - @booking.EndTime.ToString("HH:mm")</td>
+                                <td>@item.Cabin.Location</td>
+                                <td>@item.StartTime.ToLocalTime().ToString("D")</td>
+                                <td>@item.StartTime.ToLocalTime().ToString("t") - @item.EndTime.ToLocalTime().ToString("t")</td>
                                 <td>
-                                    @if (booking.StartTime > DateTime.Now)
-                                    {
-                                        <span class="badge bg-success">Upcoming</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary">Completed</span>
-                                    }
+                                    <!-- The dynamic badge is rendered here -->
+                                    <span class="badge @statusClass">@statusLabel</span>
                                 </td>
                             </tr>
                         }

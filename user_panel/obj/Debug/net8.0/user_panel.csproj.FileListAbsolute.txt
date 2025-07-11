@@ -153,4 +153,3 @@ C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\refint\
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\user_panel.pdb
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\user_panel.genruntimeconfig.cache
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\ref\user_panel.dll
-C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
