@@ -166,10 +166,18 @@ namespace user_panel.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageUser()
+        public async Task<IActionResult> ManageUser(string? search)
         {
-            var user = await _userService.GetAllUsersWithRolesAsync();
+            var user = await _userService.GetAllUsersWithRolesAsync(search);
+            ViewBag.SearchQuery = search;
             return View(user);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageUserPartial(string? search)
+        {
+            var users = await _userService.GetAllUsersWithRolesAsync(search);
+            return PartialView("_ManageUserTable", users);
         }
 
         [HttpGet]

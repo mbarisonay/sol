@@ -10,7 +10,7 @@ namespace user_panel.Services.Entity.ApplicationUserServices
     {
         Task<IdentityResult> RegisterAsync(RegisterViewModel model);
         Task<LoginServiceResultViewModel> LoginAsync(LoginViewModel model);
-        Task<List<ApplicationUserViewModel>> GetAllUsersWithRolesAsync();
+        Task<List<ApplicationUserViewModel>> GetAllUsersWithRolesAsync(string? search);
         Task<EditUserViewModel?> GetUserForEditAsync(string userId);
         Task<bool> UpdateUserAsync(EditUserViewModel model);
         Task<bool> DeleteUserAsync(string id);

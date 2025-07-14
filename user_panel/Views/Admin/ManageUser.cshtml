@@ -1,60 +1,110 @@
 ﻿@model IEnumerable<user_panel.ViewModels.ApplicationUserViewModel>
 @{
     ViewData["Title"] = "Manage Users";
+    var searchQuery = ViewBag.SearchQuery as string;
 }
 
-<div class="container container-main-large">
-    <div class="card-custom">
-        <h2>Manage Users</h2>
-        <h4 class="mt-4">Registered Users:</h4>
-        <hr style="border-color: var(--border-color);" />
+<div class="container my-5" style="max-width: 1100px;">
+    <div class="card shadow-lg rounded-4 p-4" style="background-color: #1f1f1f; color: #f1f1f1;">
+        <h2 class="mb-4">Manage Users</h2>
+
+        <form method="get" class="d-flex mb-4">
+            <input type="text"
+                   id="searchInput"
+                   name="search"
+                   value="@searchQuery"
+                   class="form-control me-2 bg-dark text-light border-secondary"
+                   placeholder="Search by name, email or username" />
+        </form>
 
         @if (TempData["StatusMessage"] != null)
         {
-            <div class="alert alert-info mt-3" role="alert">
+            <div class="alert alert-info" role="alert">
                 @TempData["StatusMessage"]
             </div>
         }
-
-        @if (Model == null || !Model.Any())
+        <div id="results">
+            @if (Model == null || !Model.Any())
         {
-            <p class="text-muted mt-3">No users found. Please add some first.</p>
+            <p class="text-muted">No users found.</p>
         }
         else
         {
-            <div class="user-list mt-4">
-                @foreach (var user in Model)
-                {
-                    <div class="card mb-3 shadow-sm border-0 rounded-3">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary mb-2">@user.FirstName @user.LastName</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Email: @user.Email</h6>
-                            <p class="card-text text-secondary">
-                                Username: @user.UserName <br />
-                                Phone: @user.PhoneNumber <br />
-                                Credit: @user.CreditBalance.ToString("C") <br />
-                                Role: <span class="badge bg-@(user.Role == "Admin" ? "danger" : "primary")">@user.Role</span>
-                            </p>
-                            <div class="d-flex justify-content-end mt-3">
-                                <a asp-action="EditUser" asp-controller="Admin" asp-route-id="@user.Id" class="btn btn-sm btn-warning">
-                                    <i class="bi bi-pencil me-2"></i> Edit User
-                                </a>
-                                <form asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@user.Id" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-sm btn-danger ms-2">
-                                        <i class="bi bi-trash me-2"></i> Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                }
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle text-white rounded">
+                    <thead class="table-secondary text-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Username</th>
+                            <th>Phone</th>
+                            <th>Credit</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.FirstName @user.LastName</td>
+                                <td>@user.Email</td>
+                                <td>@user.UserName</td>
+                                <td>@user.PhoneNumber</td>
+                                <td>@user.CreditBalance.ToString("C")</td>
+                                <td>
+                                    <span class="badge bg-@(user.Role == "Admin" ? "danger" : "primary")">@user.Role</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex">
+                                        <a asp-action="EditUser" asp-controller="Admin" asp-route-id="@user.Id" class="btn btn-sm btn-warning me-2">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                        <form asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@user.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         }
+        </div>
 
         <div class="mt-4">
-            <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary">
+            <a asp-action="Index" asp-controller="Admin" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i> Back to Admin Panel
             </a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        let debounceTimeout = null;
+        const searchInput = document.getElementById('searchInput');
+        const resultsDiv = document.getElementById('results');
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimeout);
+
+            debounceTimeout = setTimeout(() => {
+                const query = this.value;
+
+                fetch(`@Url.Action("ManageUserPartial", "Admin")?search=${encodeURIComponent(query)}`, {
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    resultsDiv.innerHTML = html;
+                })
+                .catch(err => console.error(err));
+            }, 400); // wait 400ms after user stops typing
+        });
+    </script>
+}
+

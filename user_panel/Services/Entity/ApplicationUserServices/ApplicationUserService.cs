@@ -89,9 +89,22 @@ namespace user_panel.Services.Entity.ApplicationUserServices
             return new LoginServiceResultViewModel { SignInResult = signInResult, ErrorMessage = "Invalid login attempt." };
         }
 
-        public async Task<List<ApplicationUserViewModel>> GetAllUsersWithRolesAsync()
+        public async Task<List<ApplicationUserViewModel>> GetAllUsersWithRolesAsync(string? search = null)
         {
-            var users = _userManager.Users.ToList();
+            var query = _userManager.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.ToLower();
+                query = query.Where(u =>
+                    u.FirstName.ToLower().Contains(search) ||
+                    u.LastName.ToLower().Contains(search) ||
+                    u.Email.ToLower().Contains(search) ||
+                    u.UserName.ToLower().Contains(search));
+            }
+
+            var users = await query.ToListAsync();
+
             var result = new List<ApplicationUserViewModel>();
 
             foreach (var user in users)
