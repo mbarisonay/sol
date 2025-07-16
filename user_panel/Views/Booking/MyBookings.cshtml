@@ -1,60 +1,66 @@
-﻿@model IEnumerable<user_panel.Data.Booking>
+﻿@model IEnumerable<user_panel.ViewModels.BookingViewModel>
+
+<style>
+    /* =================================================================== */
+    /* === THE FIX IS HERE === */
+    /* By removing ":not(:last-child)", this rule now applies to ALL table headers,
+           including "Status", making them all white. */
+    /* =================================================================== */
+    .table-dark-custom th {
+        color: white;
+    }
+
+    /* This rule for the data cells remains the same. */
+    .table-dark-custom td:not(:last-child) {
+        color: white;
+    }
+</style>
 
 @{
-    ViewData["Title"] = "My Reservations";
+    ViewData["Title"] = "My Bookings";
 }
 
 <div class="container container-main-large">
     <div class="card-custom">
         <h2 class="text-center">@ViewData["Title"]</h2>
+        <p class="text-center text-muted mb-4">Here is a list of all your past and upcoming reservations.</p>
 
-        @if (TempData["SuccessMessage"] != null)
+        @if (Model.Any())
         {
-            <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
-        }
-
-        @if (!Model.Any())
-        {
-            <p class="text-center text-muted mt-4">You have no reservations yet.</p>
-            <div class="text-center">
-                <a class="btn btn-primary" asp-action="Index">Book Your First Cabin</a>
-            </div>
-        }
-        else
-        {
-            <div class="table-responsive mt-4">
-                <table class="table" style="color: var(--text-light);">
+            <div class="table-responsive">
+                <table class="table table-hover table-dark-custom">
                     <thead>
                         <tr>
                             <th>Location</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Status</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Total Price</th>
+                            <th class="text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var booking in Model)
                         {
                             <tr>
-                                <td>
-                                    @booking.Cabin.District.City.Name / @booking.Cabin.District.Name
-                                </td>
-                                <td>@booking.StartTime.ToString("MMMM dd, yyyy")</td>
-                                <td>@booking.StartTime - @booking.EndTime</td>
-                                <td>
-                                    @if (booking.StartTime > DateTime.Now)
-                                    {
-                                        <span class="badge bg-success">Upcoming</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary">Completed</span>
-                                    }
+                                <td>@booking.CabinLocation</td>
+                                <td>@booking.StartTime.ToLocalTime().ToString("g")</td>
+                                <td>@booking.EndTime.ToLocalTime().ToString("g")</td>
+                                <td>@booking.TotalPrice.ToString("C")</td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill @booking.StatusBadgeClass">
+                                        @booking.CurrentStatus
+                                    </span>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info text-center">
+                You have no bookings yet. <a asp-action="Index" asp-controller="Booking" class="alert-link">Why not make one?</a>
             </div>
         }
     </div>

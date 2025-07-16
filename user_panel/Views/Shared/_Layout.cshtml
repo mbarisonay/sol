@@ -18,19 +18,23 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.custom.css" asp-append-version="true" />
 
+    <!-- =================================================================== -->
+    <!-- FIX 1: ADDED FONT AWESOME FOR THE QR ICON -->
+    <!-- Your button uses an icon from this library, so we need to include it. -->
+    <!-- =================================================================== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark fixed-top box-shadow">
-
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SportsCabin</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     <ul class="navbar-nav flex-grow-1">
                         @if (SignInManager.IsSignedIn(User))
@@ -44,14 +48,21 @@
                                 </li>
                             }
                             <li class="nav-item">
-                                <a class="nav-link fw-bold" href="#" data-bs-toggle="modal" data-bs-target="#qrScanModal">Scan QR</a>
+                                <!-- The button is correct and will target the modal below -->
+                                <a href="javascript:void(0);" class="nav-link" data-bs-toggle="modal" data-bs-target="#qrScannerModal">
+                                    <i class="fas fa-qrcode me-2"></i>Scan QR
+                                </a>
                             </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
-        </>
+            <!-- =================================================================== -->
+            <!-- FIX 2: CORRECTED THE UNCLOSED NAV TAG -->
+            <!-- Your original code had an incorrect </> tag here. -->
+            <!-- =================================================================== -->
+        </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -59,21 +70,47 @@
         </main>
     </div>
 
+    <!-- =================================================================== -->
+    <!-- FIX 3: PLACED THE MODAL HTML AT THE END OF THE BODY -->
+    <!-- This is the standard location for modals. The duplicate/empty modal has been removed. -->
+    <!-- =================================================================== -->
+    <div class="modal fade" id="qrScannerModal" tabindex="-1" aria-labelledby="qrScannerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-light" id="qrScannerModalLabel">Scan Booking QR Code</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- The QR Code video feed will be injected here -->
+                    <div id="qr-reader" style="width: 100%;"></div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <footer class="footer text-muted">
         <div class="container">
             © 2023 - Sports Cabin Software
         </div>
     </footer>
+
+    <!-- =================================================================== -->
+    <!-- FIX 4: ORGANIZED ALL SCRIPTS CORRECTLY -->
+    <!-- Scripts are now in the correct order for everything to work. -->
+    <!-- =================================================================== -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
 
-    <div class="modal fade" id="qrScanModal" tabindex="-1" aria-labelledby="qrScanModalLabel" aria-hidden="true">
-    </div>
+    <!-- QR SCANNER SCRIPTS -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script>
-        // ... qr scanner script ...
-    </script>
+    <script src="~/js/qr-scanner.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
