@@ -23,21 +23,20 @@
 
         <div class="mt-4 user-details">
             <h5>Account Details</h5>
-            <hr style="border-color: var(--border-color);" />
+            <hr />
             <dl class="row">
                 <dt class="col-sm-4">Full Name</dt>
                 <dd class="col-sm-8">@Model.FirstName @Model.LastName</dd>
-
                 <dt class="col-sm-4">E-mail Address</dt>
                 <dd class="col-sm-8">@Model.Email</dd>
-
                 <dt class="col-sm-4">Phone Number</dt>
                 <dd class="col-sm-8">@Model.PhoneNumber</dd>
             </dl>
         </div>
 
         <div class="mt-4 d-flex justify-content-start gap-2">
-            <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#qrScannerModal" id="scanQrBtn">
+            <!-- This button has the correct ID and attributes to trigger the modal -->
+            <button id="scanQrBtn" type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#qrScannerModal">
                 Scan QR
             </button>
             <a class="btn btn-warning" asp-action="ChangePassword">Change Password</a>
@@ -45,42 +44,35 @@
             <form class="d-inline" asp-action="Logout" method="post">
                 <button type="submit" class="btn btn-danger">Logout</button>
             </form>
+        </div>
+    </div>
+</div>
 
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="qrScanModal" tabindex="-1" aria-labelledby="qrScanModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Modal for the QR Code Scanner (Camera View) -->
+<div class="modal fade" id="qrScannerModal" tabindex="-1" aria-labelledby="qrScannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="qrScanModalLabel">Scan QR Code</h5>
+                <h5 class="modal-title" id="qrScannerModalLabel">Scan Cabin QR Code</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- This div is where the QR scanner video feed will be rendered. -->
-                <!-- The library requires a specific ID to target this element. -->
                 <div id="qr-reader" style="width: 100%;"></div>
-                <div id="qr-reader-results"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-<!-- ... existing qrScanModal HTML is above this ... -->
-<!-- QR Code Result Modal -->
+
+<!-- Modal for Displaying the Scan Result from the Server -->
 <div class="modal fade" id="qrResultModal" tabindex="-1" aria-labelledby="qrResultModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="qrResultModalLabel">Scan Successful</h5>
+                <h5 class="modal-title" id="qrResultModalLabel">Access Status</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>The following data was found in the QR code:</p>
-                <!-- We will use this ID to insert the scanned text -->
-                <p class="lead bg-light p-3 rounded" id="qrResultData" style="word-wrap: break-word;"></p>
+                <p id="qrResultData" class="lead text-center"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
@@ -88,83 +80,11 @@
         </div>
     </div>
 </div>
-<!-- End of QR Code Result Modal -->
+
 @section Scripts {
-
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script src="~/js/home-userpanel.js" asp-append-version="true"></script>
-
-    <!-- Include the html5-qrcode library -->
+    <!-- The html5-qrcode library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const modalElement = document.getElementById('qrScannerModal');
-            const resultContainer = document.getElementById('qr-scan-result');
-            let html5QrcodeScanner;
-
-            // This function is called when a QR code is successfully scanned
-            async function onScanSuccess(decodedText, decodedResult) {
-                // Stop the scanner to turn off the camera
-                await html5QrcodeScanner.clear();
-
-                // Show a success message in the modal
-                resultContainer.innerHTML = `
-                    <div class="alert alert-success">
-                        <strong>Success!</strong> Processing code...
-                    </div>`;
-
-                // Send the result to the server
-                try {
-                    const response = await fetch('/Account/ProcessQrCode', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': document.getElementsByName('__RequestVerificationToken')[0].value
-                        },
-                        body: JSON.stringify(decodedText)
-                    });
-
-                    const data = await response.json();
-
-                    if(data.success) {
-                        // Close the modal and show an alert on the main page
-                        $(modalElement).modal('hide');
-                        alert(`QR Code processed successfully! Data: ${decodedText}`);
-                    } else {
-                        resultContainer.innerHTML = `<div class="alert alert-danger mt-2">Server Error: ${data.message}</div>`;
-                    }
-                } catch (error) {
-                    resultContainer.innerHTML = `<div class="alert alert-danger mt-2">Could not contact server.</div>`;
-                }
-            }
-
-            // --- IMPORTANT: Modal Event Listeners ---
-
-            // Fired when the modal is shown to the user
-            $(modalElement).on('shown.bs.modal', function () {
-                // Reset result message
-                resultContainer.innerHTML = '<div class="alert alert-info">Point camera at a QR code.</div>';
-
-                // Create and render the scanner
-                html5QrcodeScanner = new Html5QrcodeScanner(
-                    "qr-reader",
-                    { fps: 10, qrbox: { width: 250, height: 250 } }
-                );
-                html5QrcodeScanner.render(onScanSuccess);
-            });
-
-            // Fired when the modal has finished being hidden from the user
-            $(modalElement).on('hidden.bs.modal', function () {
-                if (html5QrcodeScanner) {
-                    // This is crucial to stop the camera from running in the background
-                    html5QrcodeScanner.clear().catch(error => {
-                        console.error("Failed to clear html5QrcodeScanner.", error);
-                    });
-                }
-            });
-        });
-    </script>
+    <!-- Our custom script to handle the logic -->
+    <script src="~/js/home-userpanel.js" asp-append-version="true"></script>
 }

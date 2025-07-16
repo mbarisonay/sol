@@ -50,21 +50,16 @@ namespace user_panel.Controllers
             {
                 return NotFound();
             }
-
-            // Use the injected service to get the cabin by its ID
             var cabin = await _cabinService.GetCabinWithLocationByIdAsync(id.Value);
-
             if (cabin == null)
             {
-                return NotFound(); // Return 404 if no cabin with that ID exists
+                return NotFound();
             }
-
-            // Pass the found cabin object to the Details.cshtml view
             return View(cabin);
         }
 
         // ===================================================================
-        // === THIS ACTION IS MODIFIED ===
+        // === METHOD 1: [HttpGet] Create (Corrected) ===
         // ===================================================================
         [HttpGet]
         public async Task<IActionResult> Create(int id, DateTime? bookingDate)
@@ -72,28 +67,44 @@ namespace user_panel.Controllers
             var cabin = await _cabinService.GetCabinWithLocationByIdAsync(id);
             if (cabin == null) return NotFound();
 
-            // Logic to ensure the selected date is not in the past
             var date = (bookingDate.HasValue && bookingDate.Value.Date >= DateTime.Today)
                 ? bookingDate.Value.Date
                 : DateTime.Today;
 
+            var turkeyTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Turkey Standard Time" : "Europe/Istanbul"
+            );
+
+            // --- THIS IS THE FIX ---
+            // Create a new DateTime object from the date parts. This ensures its 'Kind' is 'Unspecified'.
+            var startOfLocalDay = new DateTime(date.Year, date.Month, date.Day);
+            var endOfLocalDay = startOfLocalDay.AddDays(1);
+
+            // Now, we can safely convert this 'Unspecified' time to UTC by telling the function
+            // to treat it as a Turkey time.
+            var startOfUtcDay = TimeZoneInfo.ConvertTimeToUtc(startOfLocalDay, turkeyTimeZone);
+            var endOfUtcDay = TimeZoneInfo.ConvertTimeToUtc(endOfLocalDay, turkeyTimeZone);
+
             var bookingsForDate = await _bookingService.GetWhereAsync(b =>
-                b.CabinId == id && b.StartTime.Date == date);
+                b.CabinId == id &&
+                b.StartTime >= startOfUtcDay &&
+                b.StartTime < endOfUtcDay
+            );
 
             var viewModel = new CreateBookingViewModel
             {
                 Cabin = cabin,
                 BookingDate = date,
-                BookedHours = bookingsForDate.Select(b => b.StartTime.Hour).ToList(),
-
-                // --- NEW LINE ADDED HERE ---
-                // Set the minimum date to today, formatted for the HTML input.
+                BookedHours = bookingsForDate.Select(b => TimeZoneInfo.ConvertTimeFromUtc(b.StartTime, turkeyTimeZone).Hour).ToList(),
                 MinBookingDate = DateTime.Today.ToString("yyyy-MM-dd")
             };
 
             return View(viewModel);
         }
 
+        // ===================================================================
+        // === METHOD 2: [HttpPost] Create (Also Corrected) ===
+        // ===================================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int cabinId, DateTime bookingDate, int startTimeHour)
@@ -102,10 +113,9 @@ namespace user_panel.Controllers
             var currentUser = await _userService.GetCurrentUserAsync(User);
             if (cabin == null || currentUser == null) return NotFound();
 
+            // Create the Unspecified DateTime from the form data
             var bookingStartTime = bookingDate.Date.AddHours(startTimeHour);
-            var bookingEndTime = bookingStartTime.AddHours(1);
 
-            // Check against current time to prevent booking past hours on the same day
             if (bookingStartTime < DateTime.Now)
             {
                 TempData["ErrorMessage"] = "Cannot book a time slot in the past.";
@@ -119,14 +129,19 @@ namespace user_panel.Controllers
                 return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
             }
 
-            // Convert to UTC before checking for overlaps and saving
-            var bookingStartTimeUtc = bookingStartTime.ToUniversalTime();
-            var bookingEndTimeUtc = bookingEndTime.ToUniversalTime();
+            // --- THIS IS THE FIX ---
+            // Explicitly convert the booking time from Turkey Time to UTC before saving
+            var turkeyTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
+                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Turkey Standard Time" : "Europe/Istanbul"
+            );
+            var bookingStartTimeUtc = TimeZoneInfo.ConvertTimeToUtc(bookingStartTime, turkeyTimeZone);
+            var bookingEndTimeUtc = bookingStartTimeUtc.AddHours(1);
 
             var overlapping = await _bookingService.AnyAsync(b =>
                 b.CabinId == cabinId &&
                 bookingStartTimeUtc < b.EndTime &&
                 bookingEndTimeUtc > b.StartTime);
+
             if (overlapping)
             {
                 TempData["ErrorMessage"] = "This time slot is already booked. Please choose another time.";
@@ -143,8 +158,9 @@ namespace user_panel.Controllers
             currentUser.CreditBalance -= bookingCost;
             await _bookingService.CreateAsync(newBooking);
             await _userService.UpdateAsync(currentUser);
-            TempData["SuccessMessage"] = $"✅ Your booking for a cabin in {cabin.District.City.Name} / {cabin.District.Name} on {bookingStartTime:f} is confirmed.";
-            return RedirectToAction("MyBookings");
+
+            TempData["SuccessMessage"] = $"✅ Your booking for {bookingStartTime:h:00 tt} is confirmed!";
+            return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
         }
 
         [HttpGet]

@@ -4,7 +4,11 @@
     ViewData["Title"] = "Create Booking";
 }
 
+<!-- =================================================================== -->
+<!-- === THIS STYLE BLOCK IS ADDED TO MAKE THE MODAL MATCH YOUR SITE === -->
+<!-- =================================================================== -->
 <style>
+    /* Time slot styles (unchanged) */
     .time-slot {
         border: 1px solid var(--border-color);
         background-color: #3d3d45;
@@ -24,11 +28,57 @@
             color: white;
             transform: translateY(-2px);
         }
+
+    /* New styles for the confirmation modal */
+    #bookingConfirmationModal .modal-content {
+        background-color: #2c2c34; /* Matches your 'card-custom' background */
+        color: #f0f0f0; /* Matches your light text color */
+        border: 1px solid #444; /* Matches your theme's border color */
+        border-radius: 12px; /* Gives it the modern rounded corners */
+    }
+
+    #bookingConfirmationModal .modal-header,
+    #bookingConfirmationModal .modal-footer {
+        border-color: #444; /* Makes the divider lines match the theme */
+    }
+
+    /* Makes the 'X' close button white and visible on the dark background */
+    #bookingConfirmationModal .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    /* Styles the 'Cancel' button to be a neutral dark gray */
+    #bookingConfirmationModal .btn-secondary {
+        background-color: #555;
+        border-color: #555;
+    }
+
+        #bookingConfirmationModal .btn-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+    /* The 'Confirm' button will automatically use your existing .btn-primary style (the teal color) */
+
 </style>
 
 <div class="container container-main-large">
     <div class="card-custom">
         <h2 class="text-center">Book Cabin: <span class="text-primary">@Model.Cabin.District.City.Name / @Model.Cabin.District.Name</span></h2>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success mt-3" role="alert">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mt-3" role="alert">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
         <p class="text-center text-muted mb-4">Select a date and an available time slot below.</p>
 
         <form asp-action="Create" method="get" class="mb-4">
@@ -36,9 +86,6 @@
             <div class="row g-2 align-items-end">
                 <div class="col-md-4">
                     <label for="bookingDate" class="form-label text-light">Select Date</label>
-                    <!-- =================================================================== -->
-                    <!-- === THE FIX IS HERE: min="@Model.MinBookingDate" IS ADDED      === -->
-                    <!-- =================================================================== -->
                     <input type="date"
                            id="bookingDate"
                            name="bookingDate"
@@ -55,7 +102,8 @@
         <hr style="border-color: var(--border-color-light);" />
 
         <h4 class="text-light mt-4">Available Times for <span class="text-primary">@Model.BookingDate.ToString("D")</span></h4>
-        <div class="row g-3 mt-2">
+
+        <div id="bookingFormsContainer" class="row g-3 mt-2">
             @for (int hour = 9; hour < 22; hour++)
             {
                 var isBooked = Model.BookedHours.Contains(hour);
@@ -63,24 +111,25 @@
                 var isSelectable = !isBooked && !isPast;
                 var slotClass = isSelectable ? "" : "booked";
                 var startTime = new DateTime(Model.BookingDate.Year, Model.BookingDate.Month, Model.BookingDate.Day, hour, 0, 0);
+                var displayTime = $"{startTime.ToString("HH:00")} - {startTime.AddHours(1).ToString("HH:00")}";
 
                 <div class="col-md-3 col-sm-4 col-6">
                     @if (isSelectable)
                     {
-                        <form asp-action="Create" method="post" class="h-100">
+                        <form asp-action="Create" method="post" class="h-100" data-display-time="@displayTime">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="cabinId" value="@Model.Cabin.Id" />
                             <input type="hidden" name="bookingDate" value="@Model.BookingDate.ToString("yyyy-MM-dd")" />
                             <input type="hidden" name="startTimeHour" value="@hour" />
                             <button type="submit" class="btn time-slot w-100 h-100 text-center p-3">
-                                @startTime.ToString("HH:00") - @startTime.AddHours(1).ToString("HH:00")
+                                @displayTime
                             </button>
                         </form>
                     }
                     else
                     {
                         <div class="btn time-slot @slotClass w-100 h-100 text-center p-3">
-                            @startTime.ToString("HH:00") - @startTime.AddHours(1).ToString("HH:00")
+                            @displayTime
                         </div>
                     }
                 </div>
@@ -88,3 +137,49 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="bookingConfirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirm Reservation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmBookingBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const formsContainer = document.getElementById('bookingFormsContainer');
+            const confirmationModalElement = document.getElementById('bookingConfirmationModal');
+            const confirmationModal = new bootstrap.Modal(confirmationModalElement);
+            const confirmBookingButton = document.getElementById('confirmBookingBtn');
+            const confirmationMessageElement = document.getElementById('confirmationMessage');
+
+            let formToSubmit = null;
+
+            formsContainer.addEventListener('submit', function (event) {
+                event.preventDefault();
+                formToSubmit = event.target;
+                const displayTime = formToSubmit.getAttribute('data-display-time');
+                confirmationMessageElement.textContent = `Are you sure you want to confirm your reservation for the ${displayTime} time slot?`;
+                confirmationModal.show();
+            });
+
+            confirmBookingButton.addEventListener('click', function () {
+                if (formToSubmit) {
+                    formToSubmit.submit();
+                }
+            });
+        });
+    </script>
+}

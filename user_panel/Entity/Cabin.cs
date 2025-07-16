@@ -12,7 +12,7 @@ namespace user_panel.Data
 
         public int DistrictId { get; set; } // <-- null geçici olarak izin veriliyor
         public District District { get; set; } = null!;
-
+        public string QrCode { get; set; } = Guid.NewGuid().ToString();
         public ICollection<Booking> Bookings { get; set; } = [];
     }
 }

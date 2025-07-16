@@ -13,5 +13,6 @@ namespace user_panel.Services.Entity.CabinServices
         Task<List<Cabin>> GetCabinsByDistrictAsync(int districtId);
         Task<List<Cabin>> GetCabinsByCityAsync(int cityId);
         Task<List<Cabin>> SearchAsync(string searchTerm);
+        Task<Cabin?> GetCabinByQrCodeAsync(string qrCode);
     }
 }

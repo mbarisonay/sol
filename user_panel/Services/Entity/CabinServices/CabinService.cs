@@ -68,5 +68,9 @@ namespace user_panel.Services.Entity.CabinServices
 
             return await query.ToListAsync();
         }
+        public async Task<Cabin?> GetCabinByQrCodeAsync(string qrCode)
+        {
+            return await _context.Cabins.FirstOrDefaultAsync(c => c.QrCode == qrCode);
+        }
     }
 }
