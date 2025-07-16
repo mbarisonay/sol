@@ -5,26 +5,28 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-
-// Using statements updated to match your project structure
 using user_panel.Context;
-using user_panel.Data; // <-- Corrected to use the 'Data' namespace for your Cabin model
+using user_panel.Data; // Kabin ve Booking modelleriniz için
+using Microsoft.AspNetCore.Identity; // UserManager için eklendi
 
 namespace user_panel.Controllers
 {
     public class QrController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager; // <-- YENİ: Kullanıcıyı yönetmek için eklendi
 
-        public QrController(ApplicationDbContext context)
+        // Constructor'ı UserManager'ı alacak şekilde güncelledik
+        public QrController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager; // <-- YENİ
         }
 
+        // Bu metot QR kodlarını oluşturmak için, olduğu gibi kalabilir.
         [HttpGet]
         public async Task<IActionResult> GenerateQrCodes()
         {
-            // This now uses _context.Cabins, which is correct for your DbContext
             var cabinsToUpdate = await _context.Cabins.Where(c => string.IsNullOrEmpty(c.qr_code)).ToListAsync();
             int count = 0;
 
@@ -41,30 +43,56 @@ namespace user_panel.Controllers
             return Content("No cabins needed a QR code to be generated.");
         }
 
+
+        // ===================================================================
+        // YENİ VE GELİŞTİRİLMİŞ METOT
+        // Bu metot QR kodunu okutulduğunda rezervasyon kontrolü yapar.
+        // ===================================================================
         [HttpPost]
-        public async Task<IActionResult> VerifyQrCode([FromBody] QrRequestModel request)
+        public async Task<IActionResult> CheckInWithQr([FromBody] QrRequestModel request)
         {
             if (request == null || string.IsNullOrEmpty(request.QrCode))
             {
-                return BadRequest("QR Code is required.");
+                return BadRequest();
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return Unauthorized();
             }
 
             var cabin = await _context.Cabins.FirstOrDefaultAsync(c => c.qr_code == request.QrCode);
-
             if (cabin == null)
             {
-                return NotFound(new { message = "Invalid QR Code. Cabin not found." });
+                return NotFound(new { status = "invalid_qr", message = "Invalid QR Code. Cabin not found." });
             }
 
+            var now = DateTime.UtcNow;
+
             // ===================================================================
-            // THE FINAL FIX: Changed 'cabin.Name' to 'cabin.Description'
-            // This now correctly uses the 'Description' property from YOUR Cabin.cs file.
-            // ===================================================================
-            return Ok(new { location = cabin.Description });
+            // NİHAİ DÜZELTME BURADA YAPILDI
+            // Modelinize uygun olarak 'b.ApplicationUserId' kullanıldı.
+            // =================================m==================================
+            var activeBooking = await _context.Bookings
+                .FirstOrDefaultAsync(b =>
+                    b.ApplicationUserId == currentUser.Id &&  // Bu kullanıcı için mi?
+                    b.CabinId == cabin.Id &&                  // Bu kabin için mi?
+                    b.StartTime <= now &&                     // Rezervasyon başladı mı?
+                    b.EndTime > now);                         // Rezervasyon henüz bitmedi mi?
+
+            if (activeBooking != null)
+            {
+                return Ok(new { status = "success", location = cabin.Description });
+            }
+            else
+            {
+                return Ok(new { status = "no_reservation", message = "You have no reservation." });
+            }
         }
     }
 
-    // This helper class is correct and can stay here.
+    // Bu yardımcı model olduğu gibi kalabilir
     public class QrRequestModel
     {
         public string? QrCode { get; set; }

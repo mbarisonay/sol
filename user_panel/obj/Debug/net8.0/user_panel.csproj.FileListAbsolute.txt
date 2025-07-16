@@ -46,6 +46,7 @@ C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Microso
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Mono.TextTemplating.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\QRCoder.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Serilog.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Serilog.AspNetCore.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Serilog.Enrichers.Environment.dll
@@ -162,10 +163,10 @@ C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\staticw
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\user_panel.csproj.Up2Date
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\user_panel.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\refint\user_panel.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\user_panel.pdb
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\user_panel.genruntimeconfig.cache
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\ref\user_panel.dll
-C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

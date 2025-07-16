@@ -1,88 +1,77 @@
-﻿// This whole block will run once the page's HTML is ready.
+﻿// Bu blok sayfa yüklendiğinde çalışır.
 document.addEventListener('DOMContentLoaded', function () {
 
-    // --- SETUP ---
-    // Get references to the HTML elements we need from _Layout.cshtml.
     const qrScannerModalElement = document.getElementById('qrScannerModal');
-
-    // Check if the modal element exists before proceeding.
     if (!qrScannerModalElement) {
         console.error("Scanner Error: The modal with id 'qrScannerModal' was not found.");
         return;
     }
 
-    // Create a new instance of the QR code scanner and tell it where to render the camera view.
     const html5QrCode = new Html5Qrcode("qr-reader");
 
-    // --- FUNCTION DEFINITIONS ---
-    // This function runs ONLY when a QR code is successfully scanned.
+    // QR kodu başarıyla okunduğunda bu fonksiyon çalışır.
     const onScanSuccess = (decodedText, decodedResult) => {
-        // Stop the camera to save power and prevent re-scans.
         stopScanner();
-
-        // Get a reference to the Bootstrap modal instance and hide it.
         const modal = bootstrap.Modal.getInstance(qrScannerModalElement);
         modal.hide();
 
-        // Send the scanned code to our backend controller: /Qr/VerifyQrCode
-        fetch('/Qr/VerifyQrCode', {
+        // YENİ KONTROL METODUNU ÇAĞIRIYORUZ: /Qr/CheckInWithQr
+        fetch('/Qr/CheckInWithQr', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ qrCode: decodedText }),
         })
             .then(response => {
-                // If the server says the code is not found (404), create a user-friendly error.
+                // Eğer sunucudan 404 (Not Found) gibi bir hata gelirse, bu bir sorundur.
                 if (!response.ok) {
-                    throw new Error('This QR code is not valid for any cabin.');
+                    // Özel durum: Geçersiz QR kodu için sunucudan gelen mesajı kullanalım.
+                    return response.json().then(err => { throw new Error(err.message || 'Invalid QR Code'); });
                 }
-                return response.json(); // Get the cabin data (e.g., location) from the response.
+                // Sunucudan gelen cevabı JSON formatına çevir.
+                return response.json();
             })
             .then(data => {
-                // Success! We got the location from the server.
-                const welcomeMessage = `Welcome to ${data.location} sports cabin. It's time to grind!`;
-                alert(welcomeMessage); // Show the final message.
+                // ===================================================================
+                // YENİ MANTIK: Gelen cevabın 'status' alanına göre karar ver.
+                // ===================================================================
+                if (data.status === 'success') {
+                    // Başarılı giriş: Welcome mesajını göster.
+                    const welcomeMessage = `Welcome to ${data.location} sports cabin. It's time to grind!`;
+                    alert(welcomeMessage);
+                } else if (data.status === 'no_reservation') {
+                    // Rezervasyon yok: İlgili uyarıyı göster.
+                    alert("You have no reservation");
+                } else {
+                    // Beklenmedik bir durum olursa genel bir hata göster.
+                    alert("An unexpected error occurred.");
+                }
             })
             .catch(error => {
-                // If anything went wrong (network error, invalid code), show an error alert.
+                // Ağ hatası veya geçersiz QR gibi durumlarda hatayı göster.
                 console.error('Verification Error:', error);
-                alert(error.message);
+                alert(error.message); // Örn: "Invalid QR Code. Cabin not found."
             });
     };
 
-    // A helper function to start the scanner.
     const startScanner = () => {
         html5QrCode.start(
-            { facingMode: "environment" }, // Use the back camera on phones.
+            { facingMode: "environment" },
             { fps: 10, qrbox: { width: 250, height: 250 } },
-            onScanSuccess,      // Function to call on success.
-            (errorMessage) => { /* Ignore scan failures, keep trying. */ }
+            onScanSuccess,
+            (errorMessage) => { /* Tarama hatalarını görmezden gel */ }
         ).catch(err => {
             console.error("Could not start QR scanner.", err);
             alert("Could not start camera. Please grant camera permissions.");
         });
     };
 
-    // A helper function to safely stop the scanner.
     const stopScanner = () => {
-        // Check if the scanner is actually running before trying to stop it.
         if (html5QrCode.isScanning) {
             html5QrCode.stop().catch(err => console.error("Error stopping scanner.", err));
         }
     };
 
-    // --- EVENT LISTENERS (The "Magic") ---
-    // Instead of listening for a button click, we listen for Bootstrap's own events.
-    // This is more reliable.
-
-    // Listen for when the modal is ABOUT TO BE SHOWN.
-    qrScannerModalElement.addEventListener('show.bs.modal', function () {
-        // Start the camera right when the modal opens.
-        startScanner();
-    });
-
-    // Listen for when the modal has been COMPLETELY HIDDEN.
-    qrScannerModalElement.addEventListener('hidden.bs.modal', function () {
-        // Stop the camera when the modal closes, no matter how it was closed.
-        stopScanner();
-    });
+    // Modal açıldığında ve kapandığında kamerayı başlatan/durduran event listener'lar
+    qrScannerModalElement.addEventListener('show.bs.modal', startScanner);
+    qrScannerModalElement.addEventListener('hidden.bs.modal', stopScanner);
 });
