@@ -38,10 +38,11 @@
                             <tr>
 
                                 <td>
-                                    @booking.Cabin.District.City.Name / @booking.Cabin.District.Name
+                                    @booking.CabinLocation
                                 </td>
-                                <td>@booking.StartTime.ToString("MMMM dd, yyyy")</td>
-                                <td>@booking.StartTime - @booking.EndTime</td>
+                                <td>@booking.StartTime</td>
+                                <td>@booking.EndTime</td>
+                                <td>@booking.TotalPrice.ToString("C")</td>
                                 <td>
                                     @if (booking.StartTime > DateTime.Now)
                                     {
