@@ -1,0 +1,54 @@
+﻿/*
+    Bu CSS dosyası, yalnızca Login.cshtml sayfası için özel stiller içerir.
+*/
+
+/* 1. Arka plan ve temel gövde ayarları */
+body {
+    background-image: url('../images/login.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+}
+
+/* 2. Ana kapsayıcı: formu hem dikeyde hem yatayda ortalamak için */
+.container-main {
+    display: flex;
+    justify-content: center; /* İçeriği YATAYDA ORTALAR */
+    align-items: center; /* İçeriği DİKEYDE ORTALAR */
+    min-height: 100vh; /* Kapsayıcının en az ekran yüksekliğinde olmasını sağlar */
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+/* 3. Form kartı */
+.card-custom {
+    background-color: rgba(0, 0, 0, 0.65);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 400px;
+    width: 100%;
+}
+
+    /* 4. Başlık ve etiketler */
+    .card-custom h3,
+    .card-custom .form-label {
+        color: white;
+    }
+
+/* 5. Navbar ve Footer stilleri */
+header .navbar {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px);
+}
+
+footer.footer {
+    background-color: transparent !important;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}

@@ -26,32 +26,27 @@
         }
         else
         {
-            <div class="cabin-list mt-4">
-                @foreach (var cabin in Model)
-                {
-                    <div class="card mb-3 shadow-sm border-0 rounded-3">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary mb-2">
-                                📍 @cabin.District.City.Name / @cabin.District.Name
-                            </h5>
-                            <h6 class="card-subtitle mb-3 text-muted">
-                                💰 Cost: @cabin.PricePerHour.ToString("C") per hour
-                            </h6>
-                            <p class="card-text text-secondary">@cabin.Description</p>
+            <div class="mb-3">
+                <label for="citySelect" class="form-label">City</label>
+                <select id="citySelect" class="form-select">
+                    <option value="">-- Select City --</option>
+                    @foreach (var city in ViewBag.Cities as List<SelectListItem>)
+                    {
+                        <option value="@city.Value">@city.Text</option>
+                    }
+                </select>
+            </div>
 
-                            <div class="d-flex justify-content-end mt-3">
-                                <a asp-action="EditCabin" asp-controller="Admin" asp-route-id="@cabin.Id" class="btn btn-sm btn-warning">
-                                    <i class="bi bi-pencil me-2"></i> Edit Cabin
-                                </a>
-                                <form asp-action="DeleteCabin" asp-controller="Admin" asp-route-id="@cabin.Id" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-sm btn-danger ms-2">
-                                        <i class="bi bi-trash me-2"></i> Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                }
+            <div class="mb-3">
+                <label for="districtSelect" class="form-label">District</label>
+                <select id="districtSelect" class="form-select">
+                    <option value="">-- Select District --</option>
+                </select>
+            </div>
+
+
+            <div class="cabin-list mt-4" id="cabinContainer">
+                @await Html.PartialAsync("_UpdateCabinTable", Model)
             </div>
         }
 
@@ -62,3 +57,67 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const citySelect = document.getElementById("citySelect");
+        const districtSelect = document.getElementById("districtSelect");
+        const cabinList = document.getElementById("cabinContainer");
+
+        citySelect?.addEventListener("change", function () {
+            const cityId = this.value;
+            districtSelect.innerHTML = '<option value="">-- Select District --</option>';
+
+            if (!cityId) {
+                // No city selected -> show all cabins
+                fetch(`/Admin/GetAllCabinsForFilter`)
+                    .then(res => res.text())
+                    .then(html => cabinList.innerHTML = html);
+                return;
+            }
+
+            // City selected -> load districts for city
+            fetch(`/Admin/GetDistrictsByCity/${cityId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(d => {
+                        const option = document.createElement("option");
+                        option.value = d.value;
+                        option.text = d.text;
+                        districtSelect.appendChild(option);
+                    });
+                });
+
+            // Show cabins filtered by city only (district not selected yet)
+            fetch(`/Admin/GetCabinsByCity?cityId=${cityId}`)
+                .then(res => res.text())
+                .then(html => cabinList.innerHTML = html);
+        });
+
+        districtSelect?.addEventListener("change", function () {
+            const districtId = this.value;
+            const cityId = citySelect.value;
+
+            if (!districtId) {
+                // District unselected -> show cabins by city (or all if no city)
+                if (cityId) {
+                    fetch(`/Admin/GetCabinsByCity?cityId=${cityId}`)
+                        .then(res => res.text())
+                        .then(html => cabinList.innerHTML = html);
+                } else {
+                    fetch(`/Admin/GetAllCabinsForFilter`)
+                        .then(res => res.text())
+                        .then(html => cabinList.innerHTML = html);
+                }
+                return;
+            }
+
+            // Both city and district selected -> filter cabins by district only
+            fetch(`/Admin/GetCabinsByDistrict?districtId=${districtId}`)
+                .then(res => res.text())
+                .then(html => cabinList.innerHTML = html);
+        });
+
+    </script>
+}
+

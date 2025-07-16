@@ -1,0 +1,32 @@
+﻿body {
+    background-image: url('../images/register.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+header .navbar {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+.content-container {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+    .content-container .text-center h1,
+    .content-container .text-center p {
+        color: white;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
+
+footer.footer {
+    background-color: transparent !important;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+
+}

@@ -13,7 +13,6 @@ namespace user_panel.Data
         public ApplicationUser ApplicationUser { get; set; } = null!;
         public int CabinId { get; set; }
         public Cabin Cabin { get; set; } = null!;
-        public DateTime? CheckInTime { get; set; }
 
     }
 }

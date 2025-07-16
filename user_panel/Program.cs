@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using user_panel.Context;
 using user_panel.Data; // This line is important
 using user_panel.Services.Base;
@@ -24,6 +25,19 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration)
+                 .ReadFrom.Services(services)
+                 .Enrich.FromLogContext();
+});
+
+Serilog.Debugging.SelfLog.Enable(msg =>
+{
+    File.AppendAllText("serilog-errors.txt", msg);
+});
+
 
 
 
@@ -73,6 +87,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
+
+app.UseSerilogRequestLogging();
 
 // These two must be in this order
 app.UseAuthentication();

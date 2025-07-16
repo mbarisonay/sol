@@ -1,0 +1,39 @@
+﻿body {
+    background-image: url('../images/register.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+}
+
+
+.container-main {
+    display: center;
+    align-items: center;
+    justify-content: auto;
+    min-height: 100vh;
+    padding: 2rem;
+    margin: auto;
+}
+
+.card-custom {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+    margin-top: 50px;
+    margin: center;
+}
+    .card-custom h4,
+    .card-custom .form-label {
+        color: white;
+    }
+
+header .navbar {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop
+}

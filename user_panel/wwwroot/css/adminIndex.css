@@ -1,0 +1,38 @@
+﻿/* Navbar */
+.admin-navbar {
+    background-color: rgba(0, 0, 0, 0.7); /* %70 şeffaf koyu arka plan */
+    color: white;
+    padding: 15px 30px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+.navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Arka plan görseli */
+.page-background {
+    background-image: url('../images/arkaplan.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    padding-top: 80px; /* navbar yüksekliği kadar boşluk bırak */
+}
+
+/* İçerik üst boşluğu */
+.mt-5 {
+    margin-top: 80px;
+}

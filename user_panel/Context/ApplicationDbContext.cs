@@ -21,6 +21,7 @@ namespace user_panel.Context
         public DbSet<District> Districts { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<user_panel.Models.ImageModel> Images { get; set; }
+        public DbSet<LogEntry> Logs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

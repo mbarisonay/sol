@@ -56,7 +56,7 @@ namespace user_panel.Controllers
             }
 
             // Use the injected service to get the cabin by its ID
-            var cabin = await _cabinService.GetByIdAsync(id.Value);
+            var cabin = await _cabinService.GetCabinWithLocationByIdAsync(id.Value);
 
             if (cabin == null)
             {

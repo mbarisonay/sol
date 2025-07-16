@@ -269,7 +269,7 @@ namespace user_panel.Migrations
 
                     b.HasIndex("CabinId");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("user_panel.Data.Cabin", b =>
@@ -328,7 +328,7 @@ namespace user_panel.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("CabinReservation", (string)null);
+                    b.ToTable("CabinReservation");
                 });
 
             modelBuilder.Entity("user_panel.Entity.City", b =>
@@ -372,6 +372,46 @@ namespace user_panel.Migrations
                     b.ToTable("district", (string)null);
                 });
 
+            modelBuilder.Entity("user_panel.Entity.LogEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Exception")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Level")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogEvent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MachineName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageTemplate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ThreadId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("TimeStamp")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Logs", (string)null);
+                });
+
             modelBuilder.Entity("user_panel.Models.ImageModel", b =>
                 {
                     b.Property<int>("Id")
@@ -390,7 +430,7 @@ namespace user_panel.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

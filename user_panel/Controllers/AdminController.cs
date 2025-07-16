@@ -1,32 +1,35 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using user_panel.Data;
-using user_panel.Services.Entity.ApplicationUserServices;
-using user_panel.Services.Entity.CabinServices;
-using user_panel.Services.Entity.BookingServices;
-using user_panel.ViewModels;
-using user_panel.Services.Entity.DistrictServices;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using user_panel.Data;
+using user_panel.Entity;
+using user_panel.Services.Entity.ApplicationUserServices;
+using user_panel.Services.Entity.BookingServices;
+using user_panel.Services.Entity.CabinServices;
 using user_panel.Services.Entity.CityServices;
+using user_panel.Services.Entity.DistrictServices;
+using user_panel.ViewModels;
 
 namespace user_panel.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
+        private readonly ILogger<AdminController> _logger;
         private readonly ICityService _cityService;
         private readonly IApplicationUserService _userService;
         private readonly ICabinService _cabinService;
         private readonly IBookingService _bookingService;
         private readonly IDistrictService _districtService;
 
-        public AdminController(IBookingService bookingService, IApplicationUserService userService, ICabinService cabinService, IDistrictService districtService, ICityService cityService)
+        public AdminController(IBookingService bookingService, IApplicationUserService userService, ICabinService cabinService, IDistrictService districtService, ICityService cityService, ILogger<AdminController> logger)
         {
             _userService = userService;
             _cabinService = cabinService;
             _bookingService = bookingService;
             _districtService = districtService;
             _cityService = cityService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -62,9 +65,18 @@ namespace user_panel.Controllers
                 };
 
                 await _cabinService.CreateAsync(newCabin);
+
+                // ✅ Log ekle
+                _logger.LogInformation("New cabin added: Description='{Description}', PricePerHour={PricePerHour}, DistrictId={DistrictId}",
+                    newCabin.Description, newCabin.PricePerHour, newCabin.DistrictId);
+
                 TempData["StatusMessage"] = "Cabin added successfully!";
                 return RedirectToAction("Index");
             }
+
+            // ❗ Validasyon hatası logla
+            _logger.LogWarning("Invalid cabin model posted: {@ModelStateErrors}",
+                ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
 
             ViewBag.Cities = (await _cityService.GetAllAsync())
                 .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
@@ -80,6 +92,19 @@ namespace user_panel.Controllers
             return Json(districts);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetCabinsByDistrict(int districtId)
+        {
+            var cabins = await _cabinService.GetCabinsByDistrictAsync(districtId);
+            return PartialView("_UpdateCabinTable", cabins);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCabinsByCity(int cityId)
+        {
+            var cabins = await _cabinService.GetCabinsByCityAsync(cityId);
+            return PartialView("_UpdateCabinTable", cabins);
+        }
 
 
 
@@ -87,7 +112,17 @@ namespace user_panel.Controllers
         public async Task<IActionResult> UpdateCabin()
         {
             var cabins = await _cabinService.GetCabinsWithLocationAsync();
+            ViewBag.Cities = (await _cityService.GetAllAsync())
+                .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
+                .ToList();
             return View(cabins);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCabinsForFilter()
+        {
+            var cabins = await _cabinService.GetCabinsWithLocationAsync();
+            return PartialView("_UpdateCabinTable", cabins);
         }
 
         [HttpGet]

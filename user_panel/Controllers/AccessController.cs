@@ -53,11 +53,12 @@ namespace user_panel.Controllers
                 // 1. If this is the first successful scan, set the CheckInTime.
                 // 2. Save the changes back to the database via the service.
                 // ===================================================================
-                if (validBooking.CheckInTime == null)
-                {
-                    validBooking.CheckInTime = currentTime;
-                    await _bookingService.UpdateAsync(validBooking);
-                }
+
+                //if (validBooking.CheckInTime == null)
+                //{
+                //    validBooking.CheckInTime = currentTime;
+                //    await _bookingService.UpdateAsync(validBooking);
+                //}
 
                 // TODO: Communicate with the physical smart lock's API.
                 return Ok(new { success = true, message = "Access Granted. Welcome!" });

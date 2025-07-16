@@ -1,0 +1,4 @@
+2025-07-14T09:35:54.8930907Z Unable to find a method called WithMachineName. Candidate methods are:
+Serilog.LoggerConfiguration With(Serilog.Configuration.LoggerEnrichmentConfiguration, Serilog.Core.ILogEventEnricher)
+Serilog.LoggerConfiguration AtLevel(Serilog.Configuration.LoggerEnrichmentConfiguration, System.Action`1[Serilog.Configuration.LoggerEnrichmentConfiguration], Serilog.Events.LogEventLevel, Serilog.Core.LoggingLevelSwitch)
+Serilog.LoggerConfiguration FromLogContext(Serilog.Configuration.LoggerEnrichmentConfiguration)2025-07-14T09:38:53.2678022Z Ignoring added logger provider Microsoft.EntityFrameworkCore.Design.Internal.OperationLoggerProvider2025-07-14T09:38:59.3163525Z Ignoring added logger provider Microsoft.EntityFrameworkCore.Design.Internal.OperationLoggerProvider

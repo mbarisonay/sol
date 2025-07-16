@@ -40,7 +40,7 @@
                                     @booking.Cabin.District.City.Name / @booking.Cabin.District.Name
                                 </td>
                                 <td>@booking.StartTime.ToString("MMMM dd, yyyy")</td>
-                                <td>@booking.StartTime:HH\\:mm - @booking.EndTime:HH\\:mm</td>
+                                <td>@booking.StartTime - @booking.EndTime</td>
                                 <td>
                                     @if (booking.StartTime > DateTime.Now)
                                     {

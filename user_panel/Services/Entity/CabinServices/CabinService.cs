@@ -27,11 +27,30 @@ namespace user_panel.Services.Entity.CabinServices
                 .FirstOrDefaultAsync(c => c.Id == cabinId);
         }
 
+        public async Task<List<Cabin>> GetCabinsByDistrictAsync(int districtId)
+        {
+            return await _context.Cabins
+                .Include(c => c.District)
+                    .ThenInclude(d => d.City)
+                .Where(c => c.DistrictId == districtId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Cabin>> GetCabinsByCityAsync(int cityId)
+        {
+            return await _context.Cabins
+                .Include(c => c.District)
+                    .ThenInclude(d => d.City)
+                .Where(c => c.District.CityId == cityId)
+                .ToListAsync();
+        }
+
+
         public async Task<List<Cabin>> SearchAsync(string searchTerm)
         {
             var query = _context.Cabins
                 .Include(c => c.District)
-                .ThenInclude(d => d.City)
+                    .ThenInclude(d => d.City)
                 .AsQueryable();
 
             var sanitizedSearchTerm = searchTerm?.Trim().ToLower();

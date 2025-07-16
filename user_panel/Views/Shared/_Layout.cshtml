@@ -1,4 +1,4 @@
-﻿﻿@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @using user_panel.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
@@ -17,10 +17,13 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.custom.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark fixed-top border-bottom box-shadow">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark fixed-top box-shadow">
+
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SportsCabin</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -29,9 +32,7 @@
                 </button>
 
                 <div class="navbar-collapse collapse d-sm-inline-flex">
-                    <!-- 1. Left-aligned links -->
                     <ul class="navbar-nav flex-grow-1">
-                        <!-- "Scan QR" is moved here, and only shows for logged-in users -->
                         @if (SignInManager.IsSignedIn(User))
                         {
                             var currentUser = await UserManager.GetUserAsync(User);
@@ -50,7 +51,7 @@
                     <partial name="_LoginPartial" />
                 </div>
             </div>
-        </nav>
+        </>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -68,9 +69,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
-    <!-- QR SCANNER MODAL & SCRIPT (Unchanged) -->
     <div class="modal fade" id="qrScanModal" tabindex="-1" aria-labelledby="qrScanModalLabel" aria-hidden="true">
-        <!-- ... modal content ... -->
     </div>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script>
