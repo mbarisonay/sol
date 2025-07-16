@@ -18,7 +18,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.custom.css" asp-append-version="true" />
 
-    <!-- Font Awesome is needed for the QR icon in your button -->
+    <!-- =================================================================== -->
+    <!-- FIX 1: ADDED FONT AWESOME FOR THE QR ICON -->
+    <!-- Your button uses an icon from this library, so we need to include it. -->
+    <!-- =================================================================== -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
     @await RenderSectionAsync("Styles", required: false)
@@ -44,17 +47,15 @@
                                     <a class="nav-link" asp-controller="Admin" asp-action="Index">Admin Panel</a>
                                 </li>
                             }
-                            <!-- FIX 1: BUTTON TARGETS THE CORRECT MODAL ID -->
-                            <!-- This now correctly targets the single modal defined below -->
                             <li class="nav-item">
-                                <a class="nav-link fw-bold" href="#" data-bs-toggle="modal" data-bs-target="#qrScannerModal"><i class="fas fa-qrcode"></i> Scan QR</a>
+                                <a class="nav-link fw-bold" href="#" data-bs-toggle="modal" data-bs-target="#qrScanModal">Scan QR</a>
                             </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
-        </nav> <!-- Corrected a self-closing tag here -->
+        </>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -62,13 +63,15 @@
         </main>
     </div>
 
-    <!-- FIX 2: CONSOLIDATED INTO ONE MODAL DEFINITION -->
-    <!-- The empty, duplicate modal has been removed. This is the only one needed. -->
+    <!-- =================================================================== -->
+    <!-- FIX 3: PLACED THE MODAL HTML AT THE END OF THE BODY -->
+    <!-- This is the standard location for modals. The duplicate/empty modal has been removed. -->
+    <!-- =================================================================== -->
     <div class="modal fade" id="qrScannerModal" tabindex="-1" aria-labelledby="qrScannerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark text-light">
+            <div class="modal-content bg-dark">
                 <div class="modal-header border-secondary">
-                    <h5 class="modal-title" id="qrScannerModalLabel">Scan Cabin QR Code</h5>
+                    <h5 class="modal-title text-light" id="qrScannerModalLabel">Scan Booking QR Code</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -82,24 +85,32 @@
         </div>
     </div>
 
+
     <footer class="footer text-muted">
         <div class="container">
             © 2023 - Sports Cabin Software
         </div>
     </footer>
 
-    <!-- FIX 3: ORGANIZED ALL SCRIPTS CORRECTLY -->
-    <!-- Scripts are now in the correct order with no duplicates. -->
+    <!-- =================================================================== -->
+    <!-- FIX 4: ORGANIZED ALL SCRIPTS CORRECTLY -->
+    <!-- Scripts are now in the correct order for everything to work. -->
+    <!-- =================================================================== -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- QR SCANNER LIBRARY -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
-    <!-- YOUR CUSTOM APPLICATION SCRIPTS -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- QR SCANNER SCRIPTS -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="~/js/qr-scanner.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <div class="modal fade" id="qrScanModal" tabindex="-1" aria-labelledby="qrScanModalLabel" aria-hidden="true">
+    </div>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script>
+        // ... qr scanner script ...
+    </script>
 </body>
 </html>

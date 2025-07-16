@@ -14,8 +14,5 @@ namespace user_panel.Data
         public District District { get; set; } = null!;
 
         public ICollection<Booking> Bookings { get; set; } = [];
-        
-        [Display(Name = "QR Code")]
-        public string? qr_code { get; set; }
     }
 }

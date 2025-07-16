@@ -1,77 +1,53 @@
-﻿// Bu blok sayfa yüklendiğinde çalışır.
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
 
-    const qrScannerModalElement = document.getElementById('qrScannerModal');
-    if (!qrScannerModalElement) {
-        console.error("Scanner Error: The modal with id 'qrScannerModal' was not found.");
-        return;
+    // This function is called when a QR code is successfully scanned
+    function onScanSuccess(decodedText, decodedResult) {
+        // `decodedText` contains the data from the QR code (e.g., a booking ID or URL)
+        console.log(`Scan result: ${decodedText}`);
+
+        // Stop the scanner
+        html5QrcodeScanner.clear();
+
+        // Hide the modal manually
+        var qrModal = bootstrap.Modal.getInstance(document.getElementById('qrScannerModal'));
+        qrModal.hide();
+
+        // --- ACTION: Redirect to a new page with the scanned data ---
+        // You can create a new controller action to handle this.
+        // For example, redirect to a check-in page:
+        window.location.href = `/Booking/CheckIn?code=${decodedText}`;
     }
 
-    const html5QrCode = new Html5Qrcode("qr-reader");
+    // This function is called for scan errors (optional)
+    function onScanError(errorMessage) {
+        // handle scan error, usually you can ignore this.
+        // console.warn(`QR Code scan error: ${errorMessage}`);
+    }
 
-    // QR kodu başarıyla okunduğunda bu fonksiyon çalışır.
-    const onScanSuccess = (decodedText, decodedResult) => {
-        stopScanner();
-        const modal = bootstrap.Modal.getInstance(qrScannerModalElement);
-        modal.hide();
+    // Variable to hold the scanner instance
+    let html5QrcodeScanner;
+    const modalElement = document.getElementById('qrScannerModal');
 
-        // YENİ KONTROL METODUNU ÇAĞIRIYORUZ: /Qr/CheckInWithQr
-        fetch('/Qr/CheckInWithQr', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ qrCode: decodedText }),
-        })
-            .then(response => {
-                // Eğer sunucudan 404 (Not Found) gibi bir hata gelirse, bu bir sorundur.
-                if (!response.ok) {
-                    // Özel durum: Geçersiz QR kodu için sunucudan gelen mesajı kullanalım.
-                    return response.json().then(err => { throw new Error(err.message || 'Invalid QR Code'); });
-                }
-                // Sunucudan gelen cevabı JSON formatına çevir.
-                return response.json();
-            })
-            .then(data => {
-                // ===================================================================
-                // YENİ MANTIK: Gelen cevabın 'status' alanına göre karar ver.
-                // ===================================================================
-                if (data.status === 'success') {
-                    // Başarılı giriş: Welcome mesajını göster.
-                    const welcomeMessage = `Welcome to ${data.location} sports cabin. It's time to grind!`;
-                    alert(welcomeMessage);
-                } else if (data.status === 'no_reservation') {
-                    // Rezervasyon yok: İlgili uyarıyı göster.
-                    alert("You have no reservation");
-                } else {
-                    // Beklenmedik bir durum olursa genel bir hata göster.
-                    alert("An unexpected error occurred.");
-                }
-            })
-            .catch(error => {
-                // Ağ hatası veya geçersiz QR gibi durumlarda hatayı göster.
-                console.error('Verification Error:', error);
-                alert(error.message); // Örn: "Invalid QR Code. Cabin not found."
-            });
-    };
+    // --- Event listener for when the modal is SHOWN ---
+    // We initialize the scanner only when the modal becomes visible.
+    modalElement.addEventListener('shown.bs.modal', function () {
+        if (!html5QrcodeScanner || !html5QrcodeScanner.isScanning) {
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "qr-reader", // The ID of the div to inject the scanner
+                { fps: 10, qrbox: { width: 250, height: 250 } }, // Config
+                /* verbose= */ false);
 
-    const startScanner = () => {
-        html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            onScanSuccess,
-            (errorMessage) => { /* Tarama hatalarını görmezden gel */ }
-        ).catch(err => {
-            console.error("Could not start QR scanner.", err);
-            alert("Could not start camera. Please grant camera permissions.");
-        });
-    };
-
-    const stopScanner = () => {
-        if (html5QrCode.isScanning) {
-            html5QrCode.stop().catch(err => console.error("Error stopping scanner.", err));
+            html5QrcodeScanner.render(onScanSuccess, onScanError);
         }
-    };
+    });
 
-    // Modal açıldığında ve kapandığında kamerayı başlatan/durduran event listener'lar
-    qrScannerModalElement.addEventListener('show.bs.modal', startScanner);
-    qrScannerModalElement.addEventListener('hidden.bs.modal', stopScanner);
+    // --- Event listener for when the modal is HIDDEN ---
+    // We must stop the scanner and camera when the modal is closed.
+    modalElement.addEventListener('hidden.bs.modal', function () {
+        if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
+            html5QrcodeScanner.clear().catch(error => {
+                console.error("Failed to clear html5QrcodeScanner.", error);
+            });
+        }
+    });
 });

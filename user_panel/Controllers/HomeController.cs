@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using user_panel.Settings;
-using Microsoft.EntityFrameworkCore;
-
 
 public class HomeController : Controller
 
@@ -31,6 +29,5 @@ public class HomeController : Controller
         return View();
 
     }
-
 
 }
