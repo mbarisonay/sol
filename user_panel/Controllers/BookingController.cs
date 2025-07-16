@@ -46,9 +46,20 @@ namespace user_panel.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) { return NotFound(); }
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Use the injected service to get the cabin by its ID
             var cabin = await _cabinService.GetCabinWithLocationByIdAsync(id.Value);
-            if (cabin == null) { return NotFound(); }
+
+            if (cabin == null)
+            {
+                return NotFound(); // Return 404 if no cabin with that ID exists
+            }
+
+            // Pass the found cabin object to the Details.cshtml view
             return View(cabin);
         }
 

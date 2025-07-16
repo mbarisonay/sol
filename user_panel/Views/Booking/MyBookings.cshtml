@@ -36,18 +36,21 @@
                         @foreach (var booking in Model)
                         {
                             <tr>
-                                <td>@booking.CabinLocation</td>
-                                <!--
-                                    THE FIX IS HERE: We remove .ToLocalTime()
-                                    because the time is already correct.
-                                -->
-                                <td>@booking.StartTime.ToString("g")</td>
-                                <td>@booking.EndTime.ToString("g")</td>
-                                <td>@booking.TotalPrice.ToString("C")</td>
-                                <td class="text-center">
-                                    <span class="badge rounded-pill @booking.StatusBadgeClass">
-                                        @booking.CurrentStatus
-                                    </span>
+
+                                <td>
+                                    @booking.Cabin.District.City.Name / @booking.Cabin.District.Name
+                                </td>
+                                <td>@booking.StartTime.ToString("MMMM dd, yyyy")</td>
+                                <td>@booking.StartTime - @booking.EndTime</td>
+                                <td>
+                                    @if (booking.StartTime > DateTime.Now)
+                                    {
+                                        <span class="badge bg-success">Upcoming</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Completed</span>
+                                    }
                                 </td>
                             </tr>
                         }
