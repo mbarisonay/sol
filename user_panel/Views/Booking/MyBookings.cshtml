@@ -1,16 +1,10 @@
 ﻿@model IEnumerable<user_panel.ViewModels.BookingViewModel>
 
 <style>
-    /* =================================================================== */
-    /* === THE FIX IS HERE === */
-    /* By removing ":not(:last-child)", this rule now applies to ALL table headers,
-           including "Status", making them all white. */
-    /* =================================================================== */
     .table-dark-custom th {
         color: white;
     }
 
-    /* This rule for the data cells remains the same. */
     .table-dark-custom td:not(:last-child) {
         color: white;
     }
@@ -23,7 +17,7 @@
 <div class="container container-main-large">
     <div class="card-custom">
         <h2 class="text-center">@ViewData["Title"]</h2>
-        <p class="text-center text-muted mb-4">Here is a list of all your past and upcoming reservations.</p>
+        <p class="text-center text-muted mb-4">Here is a list of all your past and upcoming reservations (Times are shown in Turkey Time Zone).</p>
 
         @if (Model.Any())
         {
@@ -43,8 +37,12 @@
                         {
                             <tr>
                                 <td>@booking.CabinLocation</td>
-                                <td>@booking.StartTime.ToLocalTime().ToString("g")</td>
-                                <td>@booking.EndTime.ToLocalTime().ToString("g")</td>
+                                <!--
+                                    THE FIX IS HERE: We remove .ToLocalTime()
+                                    because the time is already correct.
+                                -->
+                                <td>@booking.StartTime.ToString("g")</td>
+                                <td>@booking.EndTime.ToString("g")</td>
                                 <td>@booking.TotalPrice.ToString("C")</td>
                                 <td class="text-center">
                                     <span class="badge rounded-pill @booking.StatusBadgeClass">

@@ -1,32 +1,38 @@
 ﻿using System;
-using user_panel.Data; // Add this to access the Cabin class
 
 namespace user_panel.ViewModels
 {
     public class BookingViewModel
     {
         public int Id { get; set; }
+        // These properties will now hold the time already converted to Turkey's time zone for display.
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+
+        // --- NEW PROPERTIES ---
+        // These will hold the original UTC times, purely for the status calculation logic.
+        public DateTime StartTimeUtc { get; set; }
+        public DateTime EndTimeUtc { get; set; }
+
         public decimal TotalPrice { get; set; }
-        public string CabinLocation { get; set; } // e.g., "Ankara / Çankaya"
+        public string CabinLocation { get; set; }
 
         /// <summary>
         /// Calculates the current status of the booking in real-time.
-        /// This is the core logic for your new feature.
+        /// THIS LOGIC MUST ALWAYS USE UTC FOR ACCURACY.
         /// </summary>
         public string CurrentStatus
         {
             get
             {
-                // Use UtcNow for consistent server-side time comparison
                 var now = DateTime.UtcNow;
 
-                if (now >= StartTime && now < EndTime)
+                // We now compare against the explicit UTC properties.
+                if (now >= StartTimeUtc && now < EndTimeUtc)
                 {
                     return "Active";
                 }
-                if (now >= EndTime)
+                if (now >= EndTimeUtc)
                 {
                     return "Completed";
                 }
@@ -34,24 +40,16 @@ namespace user_panel.ViewModels
             }
         }
 
-        /// <summary>
-        /// Determines the Bootstrap CSS class for the status badge
-        /// based on the CurrentStatus property.
-        /// </summary>
         public string StatusBadgeClass
         {
             get
             {
                 switch (CurrentStatus)
                 {
-                    case "Active":
-                        return "bg-danger"; // Red background for Active status
-                    case "Completed":
-                        return "bg-secondary"; // Gray background for Completed
-                    case "Upcoming":
-                        return "bg-success"; // Green background for Upcoming
-                    default:
-                        return "bg-info"; // A fallback color
+                    case "Active": return "bg-danger";
+                    case "Completed": return "bg-secondary";
+                    case "Upcoming": return "bg-success";
+                    default: return "bg-info";
                 }
             }
         }

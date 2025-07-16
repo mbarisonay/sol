@@ -1,77 +1,87 @@
 ﻿@model user_panel.ViewModels.CreateBookingViewModel
+
 @{
-    ViewData["Title"] = "Book " + Model.Cabin.District.City.Name + " / " + Model.Cabin.District.Name;
-    int currentHour = DateTime.Now.Hour;
+    ViewData["Title"] = "Create Booking";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card-custom mt-4">
-            <h2 class="mb-3">@ViewData["Title"]</h2>
-            <p class="text-muted">Price: @Model.Cabin.PricePerHour.ToString("C") per hour</p>
-            <hr />
+<style>
+    .time-slot {
+        border: 1px solid var(--border-color);
+        background-color: #3d3d45;
+        color: var(--text-light);
+        transition: all 0.2s ease-in-out;
+    }
 
-            @if (TempData["ErrorMessage"] != null)
+        .time-slot.booked {
+            background-color: #5a2a2a;
+            color: #aaa;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+
+        .time-slot:not(.booked):hover {
+            background-color: var(--brand-accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="container container-main-large">
+    <div class="card-custom">
+        <h2 class="text-center">Book Cabin: <span class="text-primary">@Model.Cabin.District.City.Name / @Model.Cabin.District.Name</span></h2>
+        <p class="text-center text-muted mb-4">Select a date and an available time slot below.</p>
+
+        <form asp-action="Create" method="get" class="mb-4">
+            <input type="hidden" name="id" value="@Model.Cabin.Id" />
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label for="bookingDate" class="form-label text-light">Select Date</label>
+                    <!-- =================================================================== -->
+                    <!-- === THE FIX IS HERE: min="@Model.MinBookingDate" IS ADDED      === -->
+                    <!-- =================================================================== -->
+                    <input type="date"
+                           id="bookingDate"
+                           name="bookingDate"
+                           value="@Model.BookingDate.ToString("yyyy-MM-dd")"
+                           min="@Model.MinBookingDate"
+                           class="form-control" />
+                </div>
+            </div>
+        </form>
+
+        <hr style="border-color: var(--border-color-light);" />
+
+        <h4 class="text-light mt-4">Available Times for <span class="text-primary">@Model.BookingDate.ToString("D")</span></h4>
+        <div class="row g-3 mt-2">
+            @for (int hour = 9; hour < 22; hour++)
             {
-                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                var isBooked = Model.BookedHours.Contains(hour);
+                var isPast = Model.BookingDate.Date == DateTime.Today && hour < DateTime.Now.Hour;
+                var isSelectable = !isBooked && !isPast;
+                var slotClass = isSelectable ? "" : "booked";
+                var startTime = new DateTime(Model.BookingDate.Year, Model.BookingDate.Month, Model.BookingDate.Day, hour, 0, 0);
+
+                <div class="col-md-3 col-sm-4 col-6">
+                    @if (isSelectable)
+                    {
+                        <form asp-action="Create" method="post" class="h-100">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="cabinId" value="@Model.Cabin.Id" />
+                            <input type="hidden" name="bookingDate" value="@Model.BookingDate.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="startTimeHour" value="@hour" />
+                            <button type="submit" class="btn time-slot w-100 h-100 text-center p-3">
+                                @startTime.ToString("HH:00") - @startTime.AddHours(1).ToString("HH:00")
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="btn time-slot @slotClass w-100 h-100 text-center p-3">
+                            @startTime.ToString("HH:00") - @startTime.AddHours(1).ToString("HH:00")
+                        </div>
+                    }
+                </div>
             }
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-            }
-
-            <!-- Date Selection Form -->
-            <form asp-action="Create" asp-route-id="@Model.Cabin.Id" method="get" class="mb-4">
-                <div class="form-group">
-                    <label asp-for="BookingDate" class="form-label"></label>
-                    <input asp-for="BookingDate" class="form-control bg-dark text-light" onchange="this.form.submit()" />
-                </div>
-            </form>
-
-            <!-- Time Selection & Booking Form -->
-            <form asp-action="Create" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="cabinId" value="@Model.Cabin.Id" />
-                <input type="hidden" name="bookingDate" value="@Model.BookingDate.ToShortDateString()" />
-
-                <div class="form-group">
-                    <label class="form-label">Select a Time Slot for @Model.BookingDate.ToLongDateString()</label>
-                    <select id="startTimeHour" name="startTimeHour" class="form-select bg-dark text-light" required>
-                        <option value="">-- Choose a time --</option>
-                        @for (int hour = 9; hour <= 22; hour++)
-                        {
-                            bool isUnavailable = Model.BookedHours.Contains(hour) || (Model.BookingDate.Date == DateTime.Today && hour < currentHour);
-
-                            <option value="@hour" disabled="@isUnavailable">
-                                @{
-                                    var startTime = new DateTime(1, 1, 1, hour, 0, 0);
-                                    var endTime = startTime.AddHours(1);
-                                    string timeSlotText = $"{startTime:HH:mm} - {endTime:HH:mm}";
-                                }
-                                @timeSlotText
-
-                                @if (isUnavailable)
-                                {
-                                    bool isBooked = Model.BookedHours.Contains(hour);
-                                    if (isBooked)
-                                    {
-                                        <text>(Already Booked)</text>
-                                    }
-                                    else
-                                    {
-                                        <text>(Past)</text>
-                                    }
-                                }
-                            </option>
-                        }
-                    </select>
-                </div>
-
-                <div class="mt-4 d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">Back to Cabins</a>
-                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
