@@ -15,6 +15,8 @@ namespace user_panel.ViewModels
         [Required, EmailAddress]
         public string Email { get; set; } = null!;
 
+        [Required]
+        public string UserName { get; set; } = null!;
         public string? PhoneNumber { get; set; }
 
         [Range(0, double.MaxValue)]

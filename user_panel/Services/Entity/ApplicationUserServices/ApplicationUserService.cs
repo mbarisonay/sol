@@ -142,6 +142,7 @@ namespace user_panel.Services.Entity.ApplicationUserServices
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email!,
+                UserName = user.UserName!,
                 PhoneNumber = user.PhoneNumber,
                 CreditBalance = user.CreditBalance,
                 Role = role
@@ -156,6 +157,7 @@ namespace user_panel.Services.Entity.ApplicationUserServices
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Email = model.Email;
+            user.UserName = model.UserName;
             user.PhoneNumber = model.PhoneNumber;
             user.CreditBalance = model.CreditBalance;
 

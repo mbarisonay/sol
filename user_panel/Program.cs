@@ -10,7 +10,10 @@ using user_panel.Services.Entity.CabinReservationServices;
 using user_panel.Services.Entity.CabinServices;
 using user_panel.Services.Entity.CityServices;
 using user_panel.Services.Entity.DistrictServices;
+using user_panel.Services.Entity.LogServices;
+using user_panel.Services.Firebase; 
 using user_panel.Settings;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +60,7 @@ builder.Services.AddScoped<ICabinReservationService, CabinReservationService>();
 builder.Services.AddScoped<ICabinService, CabinService>();
 builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IDistrictService, DistrictService>();
+builder.Services.AddScoped<ILogService, LogService>();
 
 builder.Services.Configure<GoogleMapsSettings>(
     builder.Configuration.GetSection(GoogleMapsSettings.SectionName)
@@ -68,6 +72,14 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "gizli-anahtar-dosyanizin-adi.json"); 
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile(pathToKey)
+});
+builder.Services.AddSingleton<IFirebaseService, FirebaseService>(); 
+
+var app = builder.Build();
 
 var app = builder.Build();
 

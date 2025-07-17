@@ -10,6 +10,7 @@ using user_panel.Services.Entity.BookingServices;
 using user_panel.Services.Entity.CabinServices;
 using user_panel.Services.Entity.CityServices;
 using user_panel.Services.Entity.DistrictServices;
+using user_panel.Services.Entity.LogServices;
 using user_panel.ViewModels;
 
 namespace user_panel.Controllers
@@ -22,15 +23,17 @@ namespace user_panel.Controllers
         private readonly ICabinService _cabinService;
         private readonly IBookingService _bookingService;
         private readonly IDistrictService _districtService;
+        private readonly ILogService _logService;
         private readonly Serilog.ILogger _logger;
 
-        public AdminController(IBookingService bookingService, IApplicationUserService userService, ICabinService cabinService, IDistrictService districtService, ICityService cityService, IConfiguration configuration)
+        public AdminController(ILogService logService, IBookingService bookingService, IApplicationUserService userService, ICabinService cabinService, IDistrictService districtService, ICityService cityService, IConfiguration configuration)
         {
             _userService = userService;
             _cabinService = cabinService;
             _bookingService = bookingService;
             _districtService = districtService;
             _cityService = cityService;
+            _logService = logService;
             _logger = LoggerHelper.GetManualLogger(configuration);
         }
 
@@ -67,9 +70,8 @@ namespace user_panel.Controllers
                 };
 
                 await _cabinService.CreateAsync(newCabin);
-
-                _logger.Information("New cabin added: {Description}, {PricePerHour}, {DistrictId}",
-                    newCabin.Description, newCabin.PricePerHour, newCabin.DistrictId);
+                _logger.Information("New cabin added by {User} with description: '{Description}', price per hour: '{PricePerHour}', district id: '{DistrictId}'",
+                    User.Identity?.Name, newCabin.Description, newCabin.PricePerHour, newCabin.DistrictId);
 
                 TempData["StatusMessage"] = "Cabin added successfully!";
                 return RedirectToAction("Index");
@@ -154,24 +156,34 @@ namespace user_panel.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // ViewBag tekrar doldurulmalı
                 ViewBag.Cities = await _cityService.GetSelectListAsync();
                 ViewBag.Districts = await _districtService.GetSelectListByCityIdAsync(model.CityId);
                 return View(model);
             }
 
-            var existingCabin = await _cabinService.GetByIdAsync(model.Id);
+            var existingCabin = await _cabinService.GetCabinWithLocationByIdAsync(model.Id);
             if (existingCabin == null)
             {
                 TempData["ErrorMessage"] = "Cabin not found.";
                 return RedirectToAction("UpdateCabin");
             }
 
+            string oldDescription = existingCabin.Description;
+            decimal oldPrice = existingCabin.PricePerHour;
+            int oldDistrictId = existingCabin.DistrictId;
+
             existingCabin.Description = model.Description;
             existingCabin.PricePerHour = model.PricePerHour;
             existingCabin.DistrictId = model.DistrictId;
 
             await _cabinService.UpdateAsync(existingCabin);
+            _logger.Information("Cabin with id '{existingCabin}' has been edited from '{OldDescription}, '{OldPricePerHour}', '{OldDistrictId}' to '{Description}', '{PricePerHour}', '{DistrictId}' by {User}",
+                existingCabin.Id, 
+                oldDescription, oldPrice, oldDistrictId, 
+                existingCabin.Description,existingCabin.PricePerHour, existingCabin.DistrictId, 
+                User.Identity?.Name
+                );
+
 
             TempData["StatusMessage"] = $"Cabin updated successfully!";
             return RedirectToAction("UpdateCabin");
@@ -181,7 +193,7 @@ namespace user_panel.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteCabin(int id)
         {
-            var cabinToDelete = await _cabinService.GetCabinWithLocationByIdAsync(id); // District ve City içeren haliyle al
+            var cabinToDelete = await _cabinService.GetCabinWithLocationByIdAsync(id);
             if (cabinToDelete == null)
             {
                 TempData["StatusMessage"] = "❌ Error: Cabin not found for deletion.";
@@ -192,6 +204,9 @@ namespace user_panel.Controllers
 
             var cityName = cabinToDelete.District.City.Name;
             var districtName = cabinToDelete.District.Name;
+
+            _logger.Information("Cabin with id {cabinId} has been deleted by {User}",
+                cabinToDelete.Id, User.Identity?.Name);
 
             TempData["StatusMessage"] = $"✅ Cabin in '{districtName}, {cityName}' was successfully deleted.";
             return RedirectToAction("UpdateCabin");
@@ -224,13 +239,31 @@ namespace user_panel.Controllers
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
-
+            var oldUser = await _userService.GetUserForEditAsync(model.Id);
             var success = await _userService.UpdateUserAsync(model);
             if (!success)
             {
                 ModelState.AddModelError("", "Failed to update user.");
                 return View(model);
             }
+
+            _logger.Information("User with id {userId} is edited by {adminUser}. " +
+                "Changes: First Name='{OldName}' -> '{NewName}', " +
+                "Last Name='{OldSName}' -> '{NewSName}', " +
+                "Email='{OldEmail}' -> '{NewEmail}', " +
+                "Username='{OldUsername}' -> '{NewUsername}', " +
+                "PhoneNum='{OldPhoneNum}' -> '{NewPhoneNum}', " +
+                "Credit='{OldCredit}' -> '{NewCredit}', " +
+                "Role='{OldRole}' -> '{NewRole}'",
+                model.Id, User.Identity?.Name,
+                oldUser.FirstName, model.FirstName,
+                oldUser.LastName, model.LastName,
+                oldUser.Email, model.Email,
+                oldUser.UserName, model.UserName,
+                oldUser.PhoneNumber, model.PhoneNumber,
+                oldUser.CreditBalance, model.CreditBalance,
+                oldUser.Role, model.Role
+                );
 
             TempData["StatusMessage"] = "User updated successfully.";
             return RedirectToAction("ManageUser");
@@ -240,9 +273,15 @@ namespace user_panel.Controllers
         public async Task<IActionResult> DeleteUser(string id)
         {
             var success = await _userService.DeleteUserAsync(id);
-            TempData["StatusMessage"] = success
-                ? "User deleted successfully."
-                : "Failed to delete user.";
+            if (!success)
+            {
+                TempData["StatusMessage"] = "Failed to delete user.";
+            }
+            TempData["StatusMessage"] = "User deleted successfully";
+
+            _logger.Information("User with id '{userId}' has been deleted by '{User}'",
+                id, User.Identity?.Name);
+
             return RedirectToAction("ManageUser");
         }
 
@@ -258,6 +297,8 @@ namespace user_panel.Controllers
         {
             await _bookingService.DeleteAsync(id);
             TempData["StatusMessage"] = "Booking deleted successfully.";
+            _logger.Information("Booking with id '{bookingId}' has been deleted by '{User}'",
+                id, User.Identity?.Name);
             return RedirectToAction("ManageBookings");
         }
 
@@ -267,7 +308,17 @@ namespace user_panel.Controllers
             await _bookingService.DeleteAsync(id);
             await _userService.AddCreditAsync(userId, credit);
             TempData["StatusMessage"] = "Booking deleted successfully.";
+            _logger.Information("Booking with id '{bookingId}' has been cancelled by '{User}' and user with id '{userId}' is refunded a balance of '{creditBalance}'",
+                id, User.Identity?.Name, userId, credit);
             return RedirectToAction("ManageBookings");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewLogs()
+        {
+            var logs = await _logService.GetLogsAsync();
+            return View(logs);
+        }
+
     }
 }

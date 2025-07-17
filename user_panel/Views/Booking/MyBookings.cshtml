@@ -40,8 +40,8 @@
                                 <td>
                                     @booking.CabinLocation
                                 </td>
-                                <td>@booking.StartTime</td>
-                                <td>@booking.EndTime</td>
+                                <td>@booking.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>@booking.EndTime.ToString("HH:mm")</td>
                                 <td>@booking.TotalPrice.ToString("C")</td>
                                 <td>
                                     @if (booking.StartTime > DateTime.Now)

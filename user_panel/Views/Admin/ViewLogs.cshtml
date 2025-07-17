@@ -1,0 +1,49 @@
+﻿@model IEnumerable<user_panel.Entity.LogEntry>
+
+@{
+    ViewData["Title"] = "System Logs";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-light">System Logs</h2>
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary mb-3">
+        Back to Admin Panel
+    </a>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No logs found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-dark table-bordered table-hover">
+                <thead class="bg-secondary text-white">
+                    <tr>
+                        <th scope="col">Timestamp</th>
+                        <th scope="col">Level</th>
+                        <th scope="col">Message</th>
+                        <th scope="col">Exception</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model)
+                    {
+                        <tr>
+                            <td>@log.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>@log.Level</td>
+                            <td>@log.Message</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(log.Exception))
+                                {
+                                    <span class="text-danger">@log.Exception</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

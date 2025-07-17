@@ -10,6 +10,7 @@ using user_panel.Services.Entity.BookingServices;
 using user_panel.Services.Entity.CabinServices;
 using user_panel.ViewModels;
 using System.Runtime.InteropServices;
+using user_panel.Services.Firebase; // <-- YENİ: Firebase servisini kullanmak için eklendi.
 
 namespace user_panel.Controllers
 {
@@ -19,12 +20,19 @@ namespace user_panel.Controllers
         private readonly IBookingService _bookingService;
         private readonly ICabinService _cabinService;
         private readonly IApplicationUserService _userService;
+        private readonly IFirebaseService _firebaseService; // <-- YENİ: Firebase servisi için alan eklendi.
 
-        public BookingController(IBookingService bookingService, ICabinService cabinService, IApplicationUserService userService)
+        // Constructor'a IFirebaseService enjekte edildi.
+        public BookingController(
+            IBookingService bookingService,
+            ICabinService cabinService,
+            IApplicationUserService userService,
+            IFirebaseService firebaseService) // <-- YENİ: Constructor parametresi eklendi.
         {
             _bookingService = bookingService;
             _cabinService = cabinService;
             _userService = userService;
+            _firebaseService = firebaseService; // <-- YENİ: Servis atanıyor.
         }
 
         [HttpGet]
@@ -58,9 +66,6 @@ namespace user_panel.Controllers
             return View(cabin);
         }
 
-        // ===================================================================
-        // === METHOD 1: [HttpGet] Create (Corrected) ===
-        // ===================================================================
         [HttpGet]
         public async Task<IActionResult> Create(int id, DateTime? bookingDate)
         {
@@ -75,13 +80,9 @@ namespace user_panel.Controllers
                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Turkey Standard Time" : "Europe/Istanbul"
             );
 
-            // --- THIS IS THE FIX ---
-            // Create a new DateTime object from the date parts. This ensures its 'Kind' is 'Unspecified'.
             var startOfLocalDay = new DateTime(date.Year, date.Month, date.Day);
             var endOfLocalDay = startOfLocalDay.AddDays(1);
 
-            // Now, we can safely convert this 'Unspecified' time to UTC by telling the function
-            // to treat it as a Turkey time.
             var startOfUtcDay = TimeZoneInfo.ConvertTimeToUtc(startOfLocalDay, turkeyTimeZone);
             var endOfUtcDay = TimeZoneInfo.ConvertTimeToUtc(endOfLocalDay, turkeyTimeZone);
 
@@ -102,9 +103,7 @@ namespace user_panel.Controllers
             return View(viewModel);
         }
 
-        // ===================================================================
-        // === METHOD 2: [HttpPost] Create (Also Corrected) ===
-        // ===================================================================
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int cabinId, DateTime bookingDate, int startTimeHour)
@@ -113,7 +112,6 @@ namespace user_panel.Controllers
             var currentUser = await _userService.GetCurrentUserAsync(User);
             if (cabin == null || currentUser == null) return NotFound();
 
-            // Create the Unspecified DateTime from the form data
             var bookingStartTime = bookingDate.Date.AddHours(startTimeHour);
 
             if (bookingStartTime < DateTime.Now)
@@ -129,8 +127,6 @@ namespace user_panel.Controllers
                 return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
             }
 
-            // --- THIS IS THE FIX ---
-            // Explicitly convert the booking time from Turkey Time to UTC before saving
             var turkeyTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
                  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Turkey Standard Time" : "Europe/Istanbul"
             );
@@ -153,11 +149,27 @@ namespace user_panel.Controllers
                 ApplicationUserId = currentUser.Id,
                 CabinId = cabinId,
                 StartTime = bookingStartTimeUtc,
-                EndTime = bookingEndTimeUtc
+                EndTime = bookingEndTimeUtc,
+                Cabin = cabin // <-- YENİ: Firebase servisine gönderebilmek için Cabin nesnesini de ekliyoruz.
             };
+
+            // Önce veritabanı işlemlerini yapıyoruz.
             currentUser.CreditBalance -= bookingCost;
             await _bookingService.CreateAsync(newBooking);
             await _userService.UpdateAsync(currentUser);
+
+            // <-- YENİ: Veritabanı işlemleri başarılı olduktan sonra Firebase'e "Giriş İzin Belgesi" oluşturuyoruz.
+            try
+            {
+                await _firebaseService.CreateAccessPassAsync(newBooking);
+            }
+            catch (Exception ex)
+            {
+                // Firebase'e yazarken hata olursa bunu loglayın ama kullanıcıya yansıtmayın.
+                // Rezervasyonun yapılmış olması daha önemli.
+                // Örnek: _logger.LogError(ex, "Firebase'e giriş izni oluşturulamadı. Booking ID: {BookingId}", newBooking.Id);
+                Console.WriteLine($"Firebase access pass creation failed: {ex.Message}");
+            }
 
             TempData["SuccessMessage"] = $"✅ Your booking for {bookingStartTime:h:00 tt} is confirmed!";
             return RedirectToAction("Create", new { id = cabinId, bookingDate = bookingDate.Date });
@@ -192,6 +204,8 @@ namespace user_panel.Controllers
             return View(bookingViewModels);
         }
 
+        // Bu metot artık kullanılmayacak, JavaScript doğrudan Firebase'i çağıracak.
+        // Şimdilik kalabilir 
         [HttpGet]
         public IActionResult CheckIn(string code)
         {
