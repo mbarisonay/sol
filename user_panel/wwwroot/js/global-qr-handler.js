@@ -1,13 +1,13 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-    // This script handles the QR scanning functionality for the entire site.
+﻿// wwwroot/js/global-qr-handler.js
 
-    // Find the elements needed for scanning. These must exist in _Layout.cshtml.
+document.addEventListener('DOMContentLoaded', function () {
     const qrScannerModalElement = document.getElementById('qrScannerModal');
     const qrResultModalElement = document.getElementById('qrResultModal');
-    const qrResultDataElement = document.getElementById('qrResultData');
+    const qrResultTextElement = document.getElementById('qrResultText'); // Sonuç metni için bir element (örn. <p id="qrResultText"></p>)
+    const qrResultTitleElement = document.getElementById('qrResultModalLabel'); // Modal başlığı için
 
-    // If the modals aren't on the page, stop the script.
-    if (!qrScannerModalElement || !qrResultModalElement || !qrResultDataElement) {
+    if (!qrScannerModalElement || !qrResultModalElement || !qrResultTextElement || !qrResultTitleElement) {
+        console.error("Gerekli modal elementleri bulunamadı. QR Handler çalıştırılamıyor.");
         return;
     }
 
@@ -21,28 +21,50 @@
         false
     );
 
+    // Bu bizim Firebase'deki "Güvenlik Görevlimiz"
+    const verifyAndOpenDoor = firebase.functions().httpsCallable('verifyAndOpenDoor');
+
     async function onScanSuccess(decodedText, decodedResult) {
+        if (!isScannerActive) return; // Tarayıcı zaten kapandıysa tekrar işlem yapma
+
+        // Tarayıcıyı durdur ve modal'ı gizle
+        isScannerActive = false;
         await html5QrcodeScanner.clear();
         qrScannerModal.hide();
 
+        // Kullanıcı ID'sini body'deki data-attribute'tan al
+        const userId = document.body.getAttribute('data-user-id');
+        if (!userId) {
+            qrResultTitleElement.textContent = 'Hata';
+            qrResultTextElement.textContent = 'Kullanıcı kimliği bulunamadı. Lütfen tekrar giriş yapın.';
+            qrResultModal.show();
+            return;
+        }
+
+        // Kullanıcıya beklemesini söyle
+        qrResultTitleElement.textContent = 'Doğrulanıyor...';
+        qrResultTextElement.textContent = 'Lütfen bekleyin, giriş izniniz kontrol ediliyor.';
+        qrResultModal.show();
+
         try {
-            const response = await fetch('/api/access/unlock', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ qrCodeData: decodedText })
+            // Firebase Cloud Function'ı çağır!
+            const result = await verifyAndOpenDoor({
+                gymId: decodedText, // QR koddan okunan salon ID'si
+                userId: userId      // Giriş yapmış kullanıcının ID'si
             });
-            const result = await response.json();
-            qrResultDataElement.textContent = result.message;
-            qrResultModal.show();
+
+            // Başarılı sonuç geldi
+            qrResultTitleElement.textContent = 'Başarılı!';
+            qrResultTextElement.textContent = result.data.message; // "Kapı açılıyor!"
         } catch (error) {
-            qrResultDataElement.textContent = 'Could not verify access. Please try again.';
-            qrResultModal.show();
+            // Hatalı sonuç geldi
+            qrResultTitleElement.textContent = 'Giriş Başarısız';
+            qrResultTextElement.textContent = error.message || 'Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin.';
         }
     }
 
-    function onScanFailure(error) { /* This can be ignored */ }
+    function onScanFailure(error) { /* Bu hata genellikle önemli değil, görmezden gelebiliriz. */ }
 
-    // Event listener for when the scanner modal is shown.
     qrScannerModalElement.addEventListener('shown.bs.modal', function () {
         if (!isScannerActive) {
             html5QrcodeScanner.render(onScanSuccess, onScanFailure);
@@ -50,10 +72,9 @@
         }
     });
 
-    // Event listener for when the scanner modal is hidden.
     qrScannerModalElement.addEventListener('hidden.bs.modal', function () {
         if (isScannerActive) {
-            html5QrcodeScanner.clear().catch(err => { });
+            html5QrcodeScanner.clear().catch(err => { /* Hata olursa umursama */ });
             isScannerActive = false;
         }
     });

@@ -1,5 +1,6 @@
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\appsettings.json
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\kabin-sistemi-firebase-adminsdk-fbsvc-cc4a2803df.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.staticwebassets.runtime.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.staticwebassets.endpoints.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.exe
@@ -9,6 +10,23 @@ C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_pa
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.pdb
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\FirebaseAdmin.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Api.CommonProtos.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Api.Gax.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Api.Gax.Grpc.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Api.Gax.Rest.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Apis.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Apis.Auth.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Apis.Core.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Cloud.Firestore.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Cloud.Firestore.V1.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Cloud.Location.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.LongRunning.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Google.Protobuf.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Grpc.Auth.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Grpc.Core.Api.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Grpc.Net.Client.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Grpc.Net.Common.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Humanizer.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
@@ -46,6 +64,7 @@ C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Microso
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Mono.TextTemplating.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Serilog.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Serilog.AspNetCore.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\Serilog.Enrichers.Environment.dll
@@ -68,6 +87,8 @@ C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.Diagnostics.EventLog.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.Linq.Async.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.Management.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.Memory.Data.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.Runtime.Caching.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
@@ -140,6 +161,7 @@ C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\runtime
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Management.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Runtime.Caching.dll
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\user_panel.csproj.AssemblyReference.cache
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\obj\Debug\net8.0\rpswa.dswa.cache.json

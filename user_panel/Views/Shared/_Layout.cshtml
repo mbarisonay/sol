@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-g" />
+    <meta charset="utf-8" /> <!-- DEĞİŞTİ: utf-g -> utf-8 olarak düzeltildi. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Sports Cabin</title>
 
@@ -21,7 +21,10 @@
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
+
+<!-- YENİ: Kullanıcı giriş yapmışsa, body etiketine onun ID'sini ekliyoruz. JavaScript buradan okuyacak. -->
+<body data-user-id="@(User.Identity.IsAuthenticated? UserManager.GetUserId(User) : "")">
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark fixed-top box-shadow">
             <div class="container">
@@ -42,7 +45,7 @@
                                     <a class="nav-link" asp-controller="Admin" asp-action="Index">Admin Panel</a>
                                 </li>
                             }
-                            <!-- CORRECTED BUTTON -->
+                            <!-- Scan QR butonu modal'ı tetiklemek için doğru şekilde ayarlandı. -->
                             <li class="nav-item">
                                 <button type="button" class="nav-link fw-bold btn btn-link" data-bs-toggle="modal" data-bs-target="#qrScannerModal">Scan QR</button>
                             </li>
@@ -51,7 +54,7 @@
                     <partial name="_LoginPartial" />
                 </div>
             </div>
-        </nav> <!-- Corrected the closing tag here -->
+        </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -59,13 +62,14 @@
         </main>
     </div>
 
-    <!-- MODAL HTML PLACED HERE - This is the single source of truth for the modals -->
+    <!-- QR Scanner Modal -->
     <div class="modal fade" id="qrScannerModal" tabindex="-1" aria-labelledby="qrScannerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
+            <div class="modal-content bg-dark text-light">
+                <!-- DEĞİŞTİ: Modal'ın görünümü tema ile uyumlu hale getirildi. -->
+                <div class="modal-header border-secondary">
                     <h5 class="modal-title" id="qrScannerModalLabel">Scan Cabin QR Code</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="qr-reader" style="width: 100%;"></div>
@@ -74,26 +78,30 @@
         </div>
     </div>
 
+    <!-- QR Result Modal -->
     <div class="modal fade" id="qrResultModal" tabindex="-1" aria-labelledby="qrResultModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
+            <div class="modal-content bg-dark text-light">
+                <!-- DEĞİŞTİ: Modal'ın görünümü tema ile uyumlu hale getirildi. -->
+                <div class="modal-header border-secondary">
                     <h5 class="modal-title" id="qrResultModalLabel">Access Status</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="qrResultData" class="lead text-center"></p>
+                    <!-- DEĞİŞTİ: `qrResultData` ID'li element `qrResultText` olarak değiştirildi (JavaScript ile uyumlu olması için). -->
+                    <p id="qrResultText" class="lead text-center"></p>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer border-0">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
+
     <footer class="footer text-muted">
         <div class="container">
-            © 2023 - Sports Cabin Software
+            © 2024 - Sports Cabin Software
         </div>
     </footer>
 
@@ -102,8 +110,29 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    <!-- QR SCANNER SCRIPTS - This is the single source of truth for scanner scripts -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- YENİ: FIREBASE SDK SCRIPTS -->
+    <!-- Bu script'ler, QR tarayıcı script'lerinden ÖNCE yüklenmelidir. -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-functions-compat.js"></script>
+
+    <script>
+            // Firebase projenizin yapılandırma bilgilerini buraya yapıştırın.
+            // Bu bilgileri Firebase Proje Ayarları > Genel sekmesinden alabilirsiniz.
+            const firebaseConfig = {
+                apiKey: "AIzaSyCpxErbVaGS04aQ45LGo1Z6EQzjz18ZeZ8",
+                authDomain: "kabin-sistemi.firebaseapp.com",
+                projectId: "kabin-sistemi",
+                storageBucket: "kabin-sistemi.firebasestorage.app",
+                messagingSenderId: "640390025587",
+                appId: "1:640390025587:web:af74d6080186b26509f506"
+            };
+            // Firebase'i başlat
+            firebase.initializeApp(firebaseConfig);
+        </g_script>
+
+
+        <!-- QR SCANNER SCRIPTS -->
+        <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="~/js/global-qr-handler.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

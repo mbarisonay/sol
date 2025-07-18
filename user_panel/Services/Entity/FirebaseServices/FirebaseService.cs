@@ -1,43 +1,46 @@
-﻿using FirebaseAdmin.Firestore;
+﻿using Google.Cloud.Firestore;
 using user_panel.Data;
+using System;
+using System.Threading.Tasks;
 
 namespace user_panel.Services.Firebase
 {
     public class FirebaseService : IFirebaseService
     {
+        // Alan aynı kalıyor.
         private readonly FirestoreDb _firestoreDb;
 
-        public FirebaseService()
+        // --- DEĞİŞİKLİK BURADA: CONSTRUCTOR ---
+        // Artık bağlantıyı kendisi oluşturmaya çalışmıyor.
+        // Dışarıdan, hazır ve kurulmuş bir FirestoreDb bağlantısı alıyor.
+        public FirebaseService(FirestoreDb firestoreDb)
         {
-            // Proje ID'nizi buraya yazın. Bu ID, Firebase Proje Ayarları'nda bulunur.
-            _firestoreDb = FirestoreDb.Create("kabin-sistemi");
+            _firestoreDb = firestoreDb;
         }
 
         public async Task CreateAccessPassAsync(Booking booking)
         {
             if (booking.Cabin == null || string.IsNullOrEmpty(booking.Cabin.QrCode))
             {
-                // Hata yönetimi: Cabin veya QrCode bilgisi eksikse işlem yapma.
-                // Belki burada bir loglama yapabilirsiniz.
                 return;
             }
 
             var accessPassData = new
             {
                 userId = booking.ApplicationUserId,
-                gymId = booking.Cabin.QrCode, // SQL'deki Cabin.QrCode'u kullanıyoruz.
+                gymId = booking.Cabin.QrCode,
                 startTime = DateTime.SpecifyKind(booking.StartTime, DateTimeKind.Utc),
                 endTime = DateTime.SpecifyKind(booking.EndTime, DateTimeKind.Utc)
             };
 
-            // Doküman ID'sini özel formatımızla oluşturuyoruz: {QrCode}_{UserId}
             string documentId = $"{booking.Cabin.QrCode}_{booking.ApplicationUserId}";
+
             DocumentReference docRef = _firestoreDb.Collection("active_reservations").Document(documentId);
 
-            // Bu "giriş izin belgesini" Firestore'a kaydediyoruz.
             await docRef.SetAsync(accessPassData);
         }
 
+        // ... (DeleteAccessPassAsync metodu aynı kalıyor)
         public async Task DeleteAccessPassAsync(Booking booking)
         {
             if (booking.Cabin == null || string.IsNullOrEmpty(booking.Cabin.QrCode))
@@ -46,9 +49,9 @@ namespace user_panel.Services.Firebase
             }
 
             string documentId = $"{booking.Cabin.QrCode}_{booking.ApplicationUserId}";
+
             DocumentReference docRef = _firestoreDb.Collection("active_reservations").Document(documentId);
 
-            // Rezervasyon iptal edildiğinde veya bittiğinde bu izin belgesini siliyoruz.
             await docRef.DeleteAsync();
         }
     }
