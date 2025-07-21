@@ -1,7 +1,11 @@
-﻿@using user_panel.Data
+@using user_panel.Data
 @model ApplicationUser
 @{
     ViewData["Title"] = "User Panel";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/user-panel.css" asp-append-version="true" />
 }
 
 <div class="container container-main-large">
@@ -15,12 +19,11 @@
             </div>
         }
 
-        <div class="credit-balance-box mt-4">
-            <div class="balance-label">Credit Balance</div>
+        <div class="credit-balance-box">
+            <div class="balance-label">CREDIT BALANCE</div>
             <div class="balance-amount">@Model.CreditBalance.ToString("C")</div>
-            <a class="btn btn-sm btn-success" asp-action="AddCredit">Add Credit</a>
+            <a class="btn btn-success" asp-action="AddCredit">Add Credit</a>
         </div>
-
         <div class="mt-4 user-details">
             <h5>Account Details</h5>
             <hr />
@@ -35,7 +38,6 @@
         </div>
 
         <div class="mt-4 d-flex justify-content-start gap-2">
-            <!-- This button has the correct ID and attributes to trigger the modal -->
             <button id="scanQrBtn" type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#qrScannerModal">
                 Scan QR
             </button>
@@ -48,43 +50,4 @@
     </div>
 </div>
 
-<!-- Modal for the QR Code Scanner (Camera View) -->
-<div class="modal fade" id="qrScannerModal" tabindex="-1" aria-labelledby="qrScannerModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="qrScannerModalLabel">Scan Cabin QR Code</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="qr-reader" style="width: 100%;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Displaying the Scan Result from the Server -->
-<div class="modal fade" id="qrResultModal" tabindex="-1" aria-labelledby="qrResultModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="qrResultModalLabel">Access Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="qrResultData" class="lead text-center"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <!-- The html5-qrcode library -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
-    <!-- Our custom script to handle the logic -->
-    <script src="~/js/home-userpanel.js" asp-append-version="true"></script>
-}
+@* ... (MODAL VE SCRIPTS KISIMLARINI DEĞİŞTİRMEYİN) ... *@

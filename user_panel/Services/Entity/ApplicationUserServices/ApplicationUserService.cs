@@ -61,7 +61,10 @@ namespace user_panel.Services.Entity.ApplicationUserServices
                     {
                         SignInResult = signInResult,
                         RedirectAction = "Index",
-                        RedirectController = "Admin"
+                        RedirectController = "Admin",
+                        UserId = user.Id,
+                        Username = user.UserName,
+                        Email = user.Email
                     };
                 }
                 else if (await _userManager.IsInRoleAsync(user, "Customer"))
@@ -70,7 +73,10 @@ namespace user_panel.Services.Entity.ApplicationUserServices
                     {
                         SignInResult = signInResult,
                         RedirectAction = "UserPanel",
-                        RedirectController = "Account"
+                        RedirectController = "Account",
+                        UserId = user.Id,
+                        Username = user.UserName,
+                        Email = user.Email
                     };
                 }
                 else

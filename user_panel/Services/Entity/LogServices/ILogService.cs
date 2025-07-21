@@ -10,5 +10,6 @@ namespace user_panel.Services.Entity.LogServices
     public interface ILogService : IEntityService<LogEntry, int>
     {
         Task<List<LogEntry>> GetLogsAsync();
+        Task<List<LogEntry>> GetFilteredLogsAsync(string filter);
     }
 }

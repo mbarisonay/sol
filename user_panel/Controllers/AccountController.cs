@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Configuration;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using user_panel.Services.Entity.ApplicationUserServices;
-using user_panel.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using user_panel.Helpers;
 using user_panel.Models; // This should contain ApplicationUser
+using user_panel.Services.Entity.ApplicationUserServices;
+using user_panel.Services.Entity.LogServices;
+using user_panel.ViewModels;
 
 namespace user_panel.Controllers
 {
@@ -15,12 +18,16 @@ namespace user_panel.Controllers
         private readonly IApplicationUserService _userService;
         // THIS IS THE FIX: Changed IdentityUser to ApplicationUser
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogService _logService;
+        private readonly Serilog.ILogger _logger;
 
         // THIS IS THE FIX: Changed the constructor parameter type
-        public AccountController(IApplicationUserService userService, UserManager<ApplicationUser> userManager)
+        public AccountController(IApplicationUserService userService, UserManager<ApplicationUser> userManager, ILogService logService, IConfiguration configuration)
         {
             _userService = userService;
             _userManager = userManager; // The rest of your code was correct to assume this
+            _logService = logService;
+            _logger = LoggerHelper.GetManualLogger(configuration);
         }
 
         [AllowAnonymous]
@@ -33,9 +40,15 @@ namespace user_panel.Controllers
         {
             if (!ModelState.IsValid) return View(model);
             var result = await _userService.RegisterAsync(model);
-            if (result.Succeeded) return RedirectToAction("Login");
+            if (result.Succeeded) 
+            {
+                _logger.Information("A new user has registered with full name '{Name} {Surname}', username '{Username}', email '{Email}' and phone number '{PhoneNum}'",
+                    model.FirstName, model.LastName, model.UserName, model.Email, model.PhoneNumber);
+                return RedirectToAction("Login"); 
+            }
             foreach (var error in result.Errors)
                 ModelState.AddModelError(string.Empty, error.Description);
+
             return View(model);
         }
 
@@ -51,7 +64,9 @@ namespace user_panel.Controllers
             var serviceResult = await _userService.LoginAsync(model);
             if (serviceResult.SignInResult.Succeeded)
             {
-                return RedirectToAction(nameof(UserPanel));
+                _logger.Information("User '{Username}' with email '{Email}' and ID '{UserId}' has logged in successfully",
+                    serviceResult.Username, serviceResult.Email, serviceResult.UserId);
+                return RedirectToAction(serviceResult.RedirectAction, serviceResult.RedirectController);
             }
             ModelState.AddModelError(string.Empty, serviceResult.ErrorMessage ?? "Invalid login attempt.");
             return View(model);
@@ -109,6 +124,9 @@ namespace user_panel.Controllers
                 return View(model);
             }
             TempData["StatusMessage"] = "Your password has been changed.";
+
+            _logger.Information("User '{Username}' (ID: '{UserId}') has changed their password",
+                user.UserName, user.Email, user.Id);
             return RedirectToAction(nameof(UserPanel));
         }
 
@@ -130,11 +148,14 @@ namespace user_panel.Controllers
         {
             var user = await _userService.GetCurrentUserAsync(User);
             if (user == null) return NotFound();
+            var oldEmail = user.Email;
             if (model.NewEmail != user.Email)
             {
                 var result = await _userService.UpdateEmailAsync(user, model.NewEmail);
                 if (result.Succeeded)
                     TempData["StatusMessage"] = "Your E-mail has been updated.";
+                _logger.Information("User '{Username}' (ID: '{UserId}') updated their email to '{NewEmail}' from '{OldEmail}'",
+                    user.UserName, user.Id, oldEmail, model.NewEmail);
             }
             return RedirectToAction(nameof(UserPanel));
         }
@@ -144,11 +165,14 @@ namespace user_panel.Controllers
         {
             var user = await _userService.GetCurrentUserAsync(User);
             if (user == null) return NotFound();
+            var oldPhoneNum = user.PhoneNumber;
             if (model.NewPhoneNumber != user.PhoneNumber)
             {
                 var result = await _userService.UpdatePhoneNumberAsync(user, model.NewPhoneNumber);
                 if (result.Succeeded)
                     TempData["StatusMessage"] = "Your Phone Number has been updated.";
+                _logger.Information("User '{Username}' (ID: '{UserId}') updated their phone number to '{NewPhone}' from '{OldPhone}'",
+                    user.UserName, user.Id, oldPhoneNum, model.NewPhoneNumber);
             }
             return RedirectToAction(nameof(UserPanel));
         }
@@ -176,6 +200,10 @@ namespace user_panel.Controllers
                     if (result.Succeeded)
                     {
                         TempData["StatusMessage"] = $"Successfully added {model.Amount:C} to your account!";
+
+                        _logger.Information("User '{Username}' (ID: '{UserId}') added a credit of '{Credit}'. New balance: {NewBalance} ",
+                            user.UserName, user.Id, model.Amount, user.CreditBalance);
+
                         return RedirectToAction(nameof(UserPanel));
                     }
                     else

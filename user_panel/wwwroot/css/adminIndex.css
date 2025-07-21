@@ -24,8 +24,7 @@
 
 /* Arka plan görseli */
 .page-background {
-    background-image: url('../images/arkaplan.png');
-    background-size: cover;
+    background-image: url('../images/login.png');
     background-position: center;
     background-repeat: no-repeat;
     min-height: 100vh;

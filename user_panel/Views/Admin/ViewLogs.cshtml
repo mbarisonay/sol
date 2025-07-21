@@ -9,6 +9,18 @@
     <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary mb-3">
         Back to Admin Panel
     </a>
+    <form method="get" asp-action="ViewLogs" asp-controller="Admin" class="mb-3">
+        <select name="filter" class="form-select w-auto d-inline-block me-2">
+            @foreach (var option in (Dictionary<string, string>)ViewBag.FilterOptions)
+            {
+                <option value="@option.Key" selected="@(ViewBag.SelectedFilter == option.Key ? "selected" : null)">
+                    @option.Key
+                </option>
+            }
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
     @if (!Model.Any())
     {
         <div class="alert alert-info">

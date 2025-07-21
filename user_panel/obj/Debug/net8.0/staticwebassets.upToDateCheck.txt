@@ -3,8 +3,10 @@ wwwroot\css\login.css
 wwwroot\css\register.css
 wwwroot\css\site.css
 wwwroot\css\site.custom.css
+wwwroot\css\user-panel.css
 wwwroot\css\userIndex.css
 wwwroot\favicon.ico
+wwwroot\images\join_us.gif
 wwwroot\images\login.png
 wwwroot\images\register.png
 wwwroot\js\global-qr-handler.js

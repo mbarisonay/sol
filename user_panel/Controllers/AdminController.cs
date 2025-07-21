@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Configuration;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Configuration;
+using Microsoft.CodeAnalysis.Differencing;
+using Serilog;
 using user_panel.Data;
 using user_panel.Entity;
 using user_panel.Helpers;
@@ -205,8 +207,8 @@ namespace user_panel.Controllers
             var cityName = cabinToDelete.District.City.Name;
             var districtName = cabinToDelete.District.Name;
 
-            _logger.Information("Cabin with id {cabinId} has been deleted by {User}",
-                cabinToDelete.Id, User.Identity?.Name);
+            _logger.Information("Cabin deleted which is located at {District}/{City} with id {cabinId} by {User}",
+                districtName, cityName, cabinToDelete.Id, User.Identity?.Name);
 
             TempData["StatusMessage"] = $"✅ Cabin in '{districtName}, {cityName}' was successfully deleted.";
             return RedirectToAction("UpdateCabin");
@@ -272,6 +274,7 @@ namespace user_panel.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
+            var deletedUser = await _userService.GetUserForEditAsync(id);
             var success = await _userService.DeleteUserAsync(id);
             if (!success)
             {
@@ -279,8 +282,8 @@ namespace user_panel.Controllers
             }
             TempData["StatusMessage"] = "User deleted successfully";
 
-            _logger.Information("User with id '{userId}' has been deleted by '{User}'",
-                id, User.Identity?.Name);
+            _logger.Information("User deleted with username '{Username}' and id '{userId}' by '{User}'",
+                deletedUser.UserName, id, User.Identity?.Name);
 
             return RedirectToAction("ManageUser");
         }
@@ -297,7 +300,7 @@ namespace user_panel.Controllers
         {
             await _bookingService.DeleteAsync(id);
             TempData["StatusMessage"] = "Booking deleted successfully.";
-            _logger.Information("Booking with id '{bookingId}' has been deleted by '{User}'",
+            _logger.Information("Booking deleted with id '{bookingId}' by '{User}'",
                 id, User.Identity?.Name);
             return RedirectToAction("ManageBookings");
         }
@@ -314,9 +317,36 @@ namespace user_panel.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewLogs()
+        public async Task<IActionResult> ViewLogs(string filter)
         {
-            var logs = await _logService.GetLogsAsync();
+            var filterOptions = new Dictionary<string, string>
+            {
+                { "All", "" },
+                { "Login Logs", "logged" },
+                { "Register Logs", "registered" },
+                { "User Booking Logs", "booked" },
+                { "User Update Logs", "is edited" },
+                { "User Deletion Logs", "User deleted" },
+                { "Booking Deletion Logs", "Booking deleted" },
+                { "Booking Cancelation Logs", "cancelled" },
+                { "Cabin Addition Logs", "New cabin" },
+                { "Cabin Update Logs", "has been edited" },
+                { "Cabin Deletion Logs", "Cabin deleted" },
+            };
+
+            ViewBag.FilterOptions = filterOptions;
+            ViewBag.SelectedFilter = filter;
+
+            string actualFilter = "";
+            if (!string.IsNullOrEmpty(filter) && filterOptions.ContainsKey(filter))
+                actualFilter = filterOptions[filter];
+
+            List<LogEntry> logs;
+            if (string.IsNullOrEmpty(filter) || filter == "All")
+                logs = await _logService.GetLogsAsync();
+            else
+                logs = await _logService.GetFilteredLogsAsync(actualFilter);
+
             return View(logs);
         }
 

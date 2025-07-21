@@ -15,5 +15,14 @@ namespace user_panel.Services.Entity.LogServices
                 .OrderByDescending(log => log.TimeStamp)
                 .ToListAsync();
         }
+
+        public async Task<List<LogEntry>> GetFilteredLogsAsync(string filter)
+        {
+            return await _context.Logs
+                .Where(log => log.Message != null &&
+                              EF.Functions.Like(log.Message, $"%{filter}%"))
+                .OrderByDescending(log => log.TimeStamp)
+                .ToListAsync();
+        }
     }
 }

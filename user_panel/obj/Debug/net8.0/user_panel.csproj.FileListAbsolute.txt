@@ -1,9 +1,9 @@
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\appsettings.json
-C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\kabin-sistemi-firebase-adminsdk-fbsvc-cc4a2803df.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.staticwebassets.runtime.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.staticwebassets.endpoints.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.exe
+C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\ServiceAccountKey.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.deps.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.runtimeconfig.json
 C:\Users\mbari\source\repos\StajKabinSistemi\user_panel\bin\Debug\net8.0\user_panel.dll
