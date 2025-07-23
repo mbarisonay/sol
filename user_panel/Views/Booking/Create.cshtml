@@ -4,6 +4,11 @@
     ViewData["Title"] = "Create Booking";
 }
 
+@section Styles {
+    @* UserPanel ile aynı stil dosyasını kullanarak tutarlı bir görünüm sağlıyoruz *@
+    <link rel="stylesheet" href="~/css/user-panel.css" asp-append-version="true" />
+}
+
 <!-- =================================================================== -->
 <!-- === THIS STYLE BLOCK IS ADDED TO MAKE THE MODAL MATCH YOUR SITE === -->
 <!-- =================================================================== -->
@@ -107,7 +112,7 @@
             @for (int hour = 9; hour < 22; hour++)
             {
                 var isBooked = Model.BookedHours.Contains(hour);
-                var isPast = Model.BookingDate.Date == DateTime.Today && hour < DateTime.Now.Hour;
+                var isPast = Model.BookingDate.Date == DateTime.Today && hour <= DateTime.Now.Hour;
                 var isSelectable = !isBooked && !isPast;
                 var slotClass = isSelectable ? "" : "booked";
                 var startTime = new DateTime(Model.BookingDate.Year, Model.BookingDate.Month, Model.BookingDate.Day, hour, 0, 0);

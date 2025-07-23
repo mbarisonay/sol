@@ -1,4 +1,4 @@
-﻿﻿@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @using user_panel.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
@@ -7,6 +7,11 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
+        <!-- EKLEME: Scan QR Butonu -->
+        <li class="nav-item">
+            <button type="button" class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#qrScannerModal">Scan QR</button>
+        </li>
+        <!-- Mevcut Linkleriniz -->
         <li class="nav-item">
             <a class="nav-link" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
         </li>

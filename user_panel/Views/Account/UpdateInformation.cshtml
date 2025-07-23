@@ -2,6 +2,12 @@
 @{
     ViewData["Title"] = "Update Information";
 }
+
+@section Styles {
+    @* UserPanel ile aynı stil dosyasını kullanarak tutarlı bir görünüm sağlıyoruz *@
+    <link rel="stylesheet" href="~/css/user-panel.css" asp-append-version="true" />
+}
+
 <div class="container container-main-large">
     <div class="card-custom">
         <h2>@ViewData["Title"]</h2>

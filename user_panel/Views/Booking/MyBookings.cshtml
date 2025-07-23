@@ -14,6 +14,11 @@
     ViewData["Title"] = "My Bookings";
 }
 
+@section Styles {
+    @* UserPanel ile aynı stil dosyasını kullanarak tutarlı bir görünüm sağlıyoruz *@
+    <link rel="stylesheet" href="~/css/user-panel.css" asp-append-version="true" />
+}
+
 <div class="container container-main-large">
     <div class="card-custom">
         <h2 class="text-center">@ViewData["Title"]</h2>
@@ -47,6 +52,10 @@
                                     @if (booking.StartTime > DateTime.Now)
                                     {
                                         <span class="badge bg-success">Upcoming</span>
+                                    }
+                                    else if (booking.StartTime <= DateTime.Now && booking.EndTime > DateTime.Now)
+                                    {
+                                        <span class="badge bg-danger">Active</span>
                                     }
                                     else
                                     {

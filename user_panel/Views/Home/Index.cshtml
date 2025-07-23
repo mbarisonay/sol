@@ -43,14 +43,16 @@ style="
         <li class="nav-item">
             <a class="nav-link" href="#" data-target="tips">Tips</a>
         </li>
-    
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-target="plans">Plans</a>
+        </li>
     </ul>
 </nav>
 
 <!-- Content Sections (only one visible at a time) -->
 <div class="container mb-5">
     
-
+    <!--faq-->
     <section id="faq" class="content-section">
         <h2>Frequently Asked Questions</h2>
         <p>
@@ -59,24 +61,53 @@ style="
             cabin rentals all in one place.
         </p>
     </section>
-
+    <!--Tips-->
     <section id="tips" class="content-section">
-        <h2>Top Tips</h2>
-        <ul class="list-group tips-list" style="background-color: #3d3d45; border-color: var(--border-color)>
-            <li class="list-group-item tip-item">
-                Stay hydrated: Drink water before, during, and after exercise.
-            </li>
-            <li class="list-group-item tip-item">
-                Warm up properly to avoid injuries.
-            </li>
-            <li class="list-group-item tip-item">
-                Set realistic goals and track your progress.
-            </li>
-        </ul>
+        <h2 class="mb-4 text-white">Top Tips</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100" style="background-color: #3d3d45; border-color: var(--border-color);">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-white"> Stay Hydrated</h5>
+                        <p class="card-text text-light">
+                            Drink water before, during, and after exercise to maintain peak performance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100" style="background-color: #3d3d45; border-color: var(--border-color);">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-white"> Warm Up</h5>
+                        <p class="card-text text-light">
+                            Always warm up your muscles properly to avoid injuries and boost mobility.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100" style="background-color: #3d3d45; border-color: var(--border-color);">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-white"> Set Goals</h5>
+                        <p class="card-text text-light">
+                            Set realistic goals, track your progress, and celebrate small wins.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-   
+    <!--Workout Plans-->
+    <section id="plans" class="content-section">
+        <h2>Workout Plans</h2>
+        @await Component.InvokeAsync("WorkoutCard")
+    </section>
+
 </div>
-<div id="my_cabins" class="ny-content-section">
+
+<div id="my_cabins" class="ny-content-section" style="padding: 0 60px; margin-top: 60px;">
     <h2>Our Sport Cabins</h2>
     @await Component.InvokeAsync("Cabin")
 </div>
@@ -84,10 +115,10 @@ style="
 @section Styles {
     <style>
         .content-section {
-            display: none;
+            display: None;
         }
         /* Show the first section by default */
-        .content-section#about {
+        .content-section#faq {
             display: block;
         }
 

@@ -1,7 +1,17 @@
 ﻿@model user_panel.Data.Cabin
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = $"Details for {Model.District.City.Name} / {Model.District.Name}";
+}
+
+
+@section Styles {
+    @* UserPanel ile aynı stil dosyasını kullanarak tutarlı bir görünüm sağlıyoruz *@
+    <link rel="stylesheet" href="~/css/user-panel.css" asp-append-version="true" />
 }
 
 <div class="container container-main-large">
@@ -24,19 +34,24 @@
 
                 <!-- Placeholder for Images -->
                 <h4 class="mt-4">Gallery</h4>
-                <div class="row g-2">
-                    <div class="col-6">
-                        <img src="https://via.placeholder.com/400x300.png?text=Cabin+View+1" class="img-fluid rounded" alt="Cabin Image 1">
-                    </div>
-                    <div class="col-6">
-                        <img src="https://via.placeholder.com/400x300.png?text=Interior+View" class="img-fluid rounded" alt="Cabin Image 2">
-                    </div>
+                <div class="mb-3">
+                    <img src="@(Model.ImageUrl)" class="img-fluid rounded w-100" alt="Cabin Image">
                 </div>
 
-                <a asp-controller="Booking" asp-action="Create" asp-route-id="@Model.Id"
-                   class="btn btn-primary btn-lg mt-4 w-100">
-                    Book This Cabin
-                </a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <a asp-controller="Booking" asp-action="Create" asp-route-id="@Model.Id"
+                       class="btn btn-primary btn-lg mt-4 w-100">
+                        Book This Cabin
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login"
+                       class="btn btn-primary btn-lg mt-4 w-100">
+                        Login To Book This Cabin
+                    </a>
+                }
             </div>
 
             <!-- Right Side: Google Map -->

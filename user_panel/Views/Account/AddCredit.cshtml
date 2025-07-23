@@ -1,6 +1,11 @@
-﻿@model user_panel.ViewModels.AddCreditViewModel
+@model user_panel.ViewModels.AddCreditViewModel
 @{
     ViewData["Title"] = "Add Credit";
+}
+
+@section Styles {
+    @* UserPanel ile aynı stil dosyasını kullanarak tutarlı bir görünüm sağlıyoruz *@
+    <link rel="stylesheet" href="~/css/user-panel.css" asp-append-version="true" />
 }
 
 <div class="row justify-content-center">

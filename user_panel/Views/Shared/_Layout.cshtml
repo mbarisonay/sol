@@ -14,7 +14,7 @@
             box-sizing: border-box;
         }
     </style> 
-    <meta charset="utf-g" />
+    <meta charset="utf-8" /> <!-- HATALI YAZIM DÜZELTİLDİ: utf-g -> utf-8 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Sports Cabin</title>
 
@@ -29,12 +29,12 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
-<!-- YENİ: Kullanıcı giriş yapmışsa, body etiketine onun ID'sini ekliyoruz. JavaScript buradan okuyacak. -->
-<body data-user-id="@(User.Identity.IsAuthenticated? UserManager.GetUserId(User) : "")">
+<!-- DÜZELTME: UserManager.GetUserId(User) doğru kullanımı bu şekildedir -->
+<body data-user-id="@(SignInManager.IsSignedIn(User) ? UserManager.GetUserId(User) : "")">
 
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark fixed-top box-shadow">
-            <div class="container">
+            <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SportsCabin</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -52,10 +52,6 @@
                                     <a class="nav-link" asp-controller="Admin" asp-action="Index">Admin Panel</a>
                                 </li>
                             }
-                            <!-- Scan QR butonu modal'ı tetiklemek için doğru şekilde ayarlandı. -->
-                            <li class="nav-item">
-                                <button type="button" class="nav-link fw-bold btn btn-link" data-bs-toggle="modal" data-bs-target="#qrScannerModal">Scan QR</button>
-                            </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
@@ -63,7 +59,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -73,7 +69,6 @@
     <div class="modal fade" id="qrScannerModal" tabindex="-1" aria-labelledby="qrScannerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-light">
-                <!-- DEĞİŞTİ: Modal'ın görünümü tema ile uyumlu hale getirildi. -->
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title" id="qrScannerModalLabel">Scan Cabin QR Code</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -89,13 +84,11 @@
     <div class="modal fade" id="qrResultModal" tabindex="-1" aria-labelledby="qrResultModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-light">
-                <!-- DEĞİŞTİ: Modal'ın görünümü tema ile uyumlu hale getirildi. -->
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title" id="qrResultModalLabel">Access Status</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- DEĞİŞTİ: `qrResultData` ID'li element `qrResultText` olarak değiştirildi (JavaScript ile uyumlu olması için). -->
                     <p id="qrResultText" class="lead text-center"></p>
                 </div>
                 <div class="modal-footer border-0">
@@ -104,7 +97,6 @@
             </div>
         </div>
     </div>
-
 
     <footer class="footer text-muted">
         <div class="container">
@@ -117,32 +109,33 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    <!-- YENİ: FIREBASE SDK SCRIPTS -->
-    <!-- Bu script'ler, QR tarayıcı script'lerinden ÖNCE yüklenmelidir. -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-functions-compat.js"></script>
-
-    <script>
-            // Firebase projenizin yapılandırma bilgilerini buraya yapıştırın.
-            // Bu bilgileri Firebase Proje Ayarları > Genel sekmesinden alabilirsiniz.
+    <!-- FIREBASE & QR SCRIPTS (Sadece giriş yapmış kullanıcılar için yüklenmeli) -->
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <!-- 1. Firebase SDK'ları -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-functions-compat.js"></script>
+        <script>
+            // DÜZELTME: Hatalı </g_script> etiketi  olarak düzeltildi.
             const firebaseConfig = {
                 apiKey: "AIzaSyCpxErbVaGS04aQ45LGo1Z6EQzjz18ZeZ8",
                 authDomain: "kabin-sistemi.firebaseapp.com",
                 projectId: "kabin-sistemi",
-                storageBucket: "kabin-sistemi.firebasestorage.app",
+                storageBucket: "kabin-sistemi.appspot.com",
                 messagingSenderId: "640390025587",
                 appId: "1:640390025587:web:af74d6080186b26509f506"
             };
-            // Firebase'i başlat
             firebase.initializeApp(firebaseConfig);
-        </g_script>
+        </script>
 
+        <!-- 2. QR Tarayıcı Kütüphanesi -->
+        <!-- DÜZELTME: https://unpkg.com/html5-qrcode kütüphanesi düzgün bir script etiketiyle yüklenmeli. -->
+        <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js" type="text/javascript"></script>
 
-        <!-- QR SCANNER SCRIPTS -->
-        <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="~/js/global-qr-handler.js" asp-append-version="true"></script>
+        <!-- 3. Bizim Özel Handler Script'imiz (EN SONDA) -->
+        <script src="~/js/global-qr-handler.js" asp-append-version="true"></script>
+    }
 
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

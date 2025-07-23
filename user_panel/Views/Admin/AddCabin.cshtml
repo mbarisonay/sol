@@ -11,7 +11,7 @@
         <h4 class="mt-4">Add New Cabin</h4>
         <hr style="border-color: var(--border-color);" />
 
-        <form asp-action="AddCabin" method="post">
+        <form asp-action="AddCabin" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label asp-for="CityId" class="form-label">City</label>
                 <select asp-for="CityId" class="form-select" asp-items="cities" id="citySelect" required>
@@ -38,6 +38,17 @@
                 <label asp-for="PricePerHour" class="form-label">Cost ($)</label>
                 <input asp-for="PricePerHour" type="number" step="0.01" class="form-control" required />
                 <span asp-validation-for="PricePerHour" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="QrCode" class="form-label">QrCode (ex. bayrakli-1)</label>
+                <textarea asp-for="QrCode" class="form-control" required></textarea>
+                <span asp-validation-for="QrCode" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="CabinImage" class="form-label">Cabin Image</label>
+                <input type="file" class="form-control" name="CabinImage" accept="image/*" />
             </div>
 
             <button type="submit" class="btn btn-success">Add Cabin</button>
